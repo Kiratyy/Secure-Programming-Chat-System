@@ -1,0 +1,112 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #b2b2b2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.username {
+    text-align: center;
+    margin-left: 250px;
+    white-space: nowrap;
+    margin-bottom: 500px;
+}
+
+.chat-container {
+    width: 1500px;
+    height: 1000px;
+    background-color: #2E3036;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 250px;
+    margin-bottom: 10px;
+}
+
+.chat-box {
+    padding: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+    margin-top: 495px;
+}
+
+.message {
+    margin: 10px 0;
+    border-radius: 10px;
+    max-width: 80%;
+    color: white;
+    font-size: 14px;
+    position: relative;
+}
+
+.message-left {
+    align-self: flex-start;
+    border-radius: 15px 15px 15px 0;
+}
+
+.message-right {
+    align-self: flex-end;
+    border-radius: 15px 15px 0 15px;
+    color: white;
+}
+
+.message .time {
+    font-size: 10px;
+    color: #a0a0a0;
+    position: absolute;
+    bottom: 18px;
+
+}
+
+.date-divider {
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+    margin: 10px 0;
+    position: relative;
+}
+
+.date-divider::before,
+.date-divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: #ccc;
+}
+
+.date-divider::before {
+    left: 0;
+}
+
+.date-divider::after {
+    right: 0;
+}
+
+.input-box {
+    display: flex;
+    padding: 10px;
+    background-color: #2E3036;
+    border-radius: 0 0 10px 10px;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+    background-color: #a9a9a9;
+}
+
+.input-box button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+}
