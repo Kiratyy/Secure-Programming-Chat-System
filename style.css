@@ -144,3 +144,45 @@ body {
 .input-box button:active {
     transform: translateY(2px);
 }
+
+.file-transfer-area {
+    padding: 10px;
+    background-color: #3a3b3f;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.file-preview {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.file-preview img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.file-progress {
+    height: 5px;
+    background-color: #007bff;
+    width: 0;
+    transition: width 0.3s;
+}
+
+.attach-file-button {
+    background-color: #4CAF50;
+    margin-right: 5px;
+}
+
+.file-download-link.no-underline {
+    text-decoration: none;
+    color: white;
+}
+
+.file-download-link.no-underline:hover {
+    text-decoration: underline;
+}
