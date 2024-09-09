@@ -112,3 +112,4 @@ chatBox.addEventListener('click', (e) => {
         document.body.removeChild(link);
     }
 });
+
