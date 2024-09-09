@@ -1,11 +1,20 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #b2b2b2;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    background-image: linear-gradient(
+        23deg,
+        hsl(49deg 100% 69%) 0%,
+        hsl(16deg 80% 61%) 2%,
+        hsl(330deg 81% 34%) 12%,
+        hsl(259deg 100% 15%) 50%,
+        hsl(212deg 100% 25%) 88%,
+        hsl(197deg 100% 30%) 98%,
+        hsl(183deg 79% 36%) 100%
+    );
 }
 
 .username {
@@ -16,19 +25,29 @@ body {
 }
 
 .chat-container {
-    width: 1500px;
-    height: 1000px;
+    width: 1000px;
+    height: 800px;
     background-color: #2E3036;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-left: 250px;
-    margin-bottom: 10px;
+    box-shadow: 0 0 1.25em 0.5em #c3c3c333;
+    border-radius: 10mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative; /* Necessary for relative positioning of the chat box */
+    overflow: hidden; /* Prevent overflow beyond container */
 }
 
 .chat-box {
     padding: 10px;
-    max-height: 500px;
-    overflow-y: auto;
-    margin-top: 495px;
+    height: 650px; /* Fixed height to ensure it stays constrained */
+    overflow-y: auto; /* Allows vertical scrolling for messages */
+    flex-grow: 1;
+    margin-bottom: 20px; /* Space between the chat box and input field */
+    box-sizing: border-box; /* Ensures padding is considered in height calculation */
+}
+
+.chat-box::-webkit-scrollbar{
+    display: none;
 }
 
 .message {
@@ -37,16 +56,21 @@ body {
     max-width: 80%;
     color: white;
     font-size: 14px;
+    padding: 10px;
+    background-color: #3a3b3f;
     position: relative;
+    overflow-wrap: break-word; /* Ensure text breaks properly */
 }
 
 .message-left {
     align-self: flex-start;
+    background-color: #4d4e52;
     border-radius: 15px 15px 15px 0;
 }
 
 .message-right {
     align-self: flex-end;
+    background-color: #007bff;
     border-radius: 15px 15px 0 15px;
     color: white;
 }
@@ -54,9 +78,9 @@ body {
 .message .time {
     font-size: 10px;
     color: #a0a0a0;
-    position: absolute;
-    bottom: 18px;
-
+    display: block;
+    text-align: right;
+    margin-top: 5px;
 }
 
 .date-divider {
@@ -90,6 +114,8 @@ body {
     padding: 10px;
     background-color: #2E3036;
     border-radius: 0 0 10px 10px;
+    position: sticky;
+    bottom: 0;
 }
 
 .input-box input {
@@ -109,4 +135,12 @@ body {
     border-radius: 20px;
     color: white;
     cursor: pointer;
+}
+
+.input-box button:hover {
+    filter: brightness(0.9);
+}
+
+.input-box button:active {
+    transform: translateY(2px);
 }
