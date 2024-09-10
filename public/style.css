@@ -117,7 +117,7 @@ body {
     border-radius: 10px;
     color: white;
     cursor: pointer;
-    margin-right: 5px; /* Reduced space between clear button and input box */
+    margin-right: 5px; 
 }
 
 .clear-button:hover {
@@ -132,7 +132,7 @@ body {
     display: flex;
     flex: 1;
     max-width: 500px;
-    margin-right: 5px; /* Reduced excess space on the right */
+    margin-right: 5px; 
 }
 
 .input-text {
@@ -154,7 +154,7 @@ body {
 }
 
 .attach-file-button {
-    margin-right: 10px; /* Added space between attach and send buttons */
+    margin-right: 10px; 
 }
 
 .input-box button:hover {

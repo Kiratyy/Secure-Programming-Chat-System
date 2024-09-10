@@ -91,7 +91,7 @@ const simulateFileTransfer = (fileSize) => {
 
 // Clear messages function
 const clearMessages = () => {
-    chatBox.innerHTML = ''; // Clear all the messages inside the chat box
+    chatBox.innerHTML = ''; 
 };
 
 // Event listeners
