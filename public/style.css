@@ -17,15 +17,8 @@ body {
     );
 }
 
-.username {
-    text-align: center;
-    margin-left: 250px;
-    white-space: nowrap;
-    margin-bottom: 500px;
-}
-
 .chat-container {
-    width: 900px;
+    width: 700px; 
     height: 750px;
     background-color: #2E3036;
     box-shadow: 0 0 1.25em 0.5em #c3c3c333;
@@ -33,20 +26,20 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative; /* Necessary for relative positioning of the chat box */
-    overflow: hidden; /* Prevent overflow beyond container */
+    position: relative;
+    overflow: hidden;
 }
 
 .chat-box {
     padding: 10px;
-    height: 650px; /* Fixed height to ensure it stays constrained */
-    overflow-y: auto; /* Allows vertical scrolling for messages */
+    height: 650px;
+    overflow-y: auto;
     flex-grow: 1;
-    margin-bottom: 20px; /* Space between the chat box and input field */
-    box-sizing: border-box; /* Ensures padding is considered in height calculation */
+    margin-bottom: 20px;
+    box-sizing: border-box;
 }
 
-.chat-box::-webkit-scrollbar{
+.chat-box::-webkit-scrollbar {
     display: none;
 }
 
@@ -59,7 +52,7 @@ body {
     padding: 10px;
     background-color: #3a3b3f;
     position: relative;
-    overflow-wrap: break-word; /* Ensure text breaks properly */
+    overflow-wrap: break-word;
 }
 
 .message-left {
@@ -109,32 +102,59 @@ body {
     right: 0;
 }
 
-.input-box {
+.input-container {
     display: flex;
-    padding: 10px;
+    align-items: center;
     background-color: #2E3036;
+    padding: 10px;
     border-radius: 0 0 10px 10px;
-    position: sticky;
-    bottom: 0;
 }
 
-.input-box input {
-    flex: 1;
-    padding: 10px;
+.clear-button {
+    padding: 5px 10px; 
+    background-color: #ff4d4d;
     border: none;
-    border-radius: 20px;
-    margin-right: 10px;
-    outline: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    margin-right: 5px; 
+}
+
+.clear-button:hover {
+    filter: brightness(0.9);
+}
+
+.clear-button:active {
+    transform: translateY(2px);
+}
+
+.input-box {
+    display: flex;
+    flex: 1;
+    max-width: 500px;
+    margin-right: 5px; 
+}
+
+.input-text {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 15px;
     background-color: #a9a9a9;
+    outline: none;
 }
 
 .input-box button {
-    padding: 10px 20px;
+    padding: 8px 10px;
     background-color: #007bff;
     border: none;
-    border-radius: 20px;
+    border-radius: 15px;
     color: white;
     cursor: pointer;
+}
+
+.attach-file-button {
+    margin-right: 10px; 
 }
 
 .input-box button:hover {
@@ -143,46 +163,4 @@ body {
 
 .input-box button:active {
     transform: translateY(2px);
-}
-
-.file-transfer-area {
-    padding: 10px;
-    background-color: #3a3b3f;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-.file-preview {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-    color: white;
-}
-
-.file-preview img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    margin-right: 10px;
-}
-
-.file-progress {
-    height: 5px;
-    background-color: #007bff;
-    width: 0;
-    transition: width 0.3s;
-}
-
-.attach-file-button {
-    background-color: #4CAF50;
-    margin-right: 5px;
-}
-
-.file-download-link.no-underline {
-    text-decoration: none;
-    color: white;
-}
-
-.file-download-link.no-underline:hover {
-    text-decoration: underline;
 }

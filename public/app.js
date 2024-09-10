@@ -6,6 +6,7 @@ const attachFileButton = document.querySelector('.attach-file-button');
 const fileTransferArea = document.querySelector('.file-transfer-area');
 const filePreview = document.querySelector('.file-preview');
 const fileProgress = document.querySelector('.file-progress');
+const clearButton = document.querySelector('.clear-button');
 
 let selectedFile = null;
 
@@ -36,7 +37,7 @@ const sendMessage = (e) => {
         
         fileElement.innerHTML = `
             <a href="${blobUrl}" download="${selectedFile.name}" class="file-download-link no-underline">
-                📎 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)
+                ðŸ“Ž ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)
             </a>
         `;
         
@@ -88,17 +89,21 @@ const simulateFileTransfer = (fileSize) => {
     }, fileSize / 50); // Adjust speed based on file size
 };
 
+// Clear messages function
+const clearMessages = () => {
+    chatBox.innerHTML = ''; 
+};
+
 // Event listeners
 sendButton.addEventListener('click', sendMessage);
-
 inputText.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage(e);
     }
 });
-
 attachFileButton.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFileSelect);
+clearButton.addEventListener('click', clearMessages);
 
 // Add event delegation for file downloads
 chatBox.addEventListener('click', (e) => {
@@ -112,4 +117,3 @@ chatBox.addEventListener('click', (e) => {
         document.body.removeChild(link);
     }
 });
-
