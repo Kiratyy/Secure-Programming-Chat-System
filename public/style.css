@@ -151,6 +151,10 @@ body {
     color: white;
 }
 
+.input-box .attach-file-button{
+    margin-right: 8px;
+}
+
 .file-transfer-area {
     padding: 10px;
     background-color: #3a3b3f;
