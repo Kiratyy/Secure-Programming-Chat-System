@@ -32,13 +32,13 @@ const sendMessage = (e) => {
         const fileElement = document.createElement('div');
         fileElement.classList.add('file-attachment');
         
-        // Create a blob URL for the file
-        const blobUrl = URL.createObjectURL(selectedFile);
+        const fileIcon = getFileIcon(selectedFile.type);
+        const fileSize = formatFileSize(selectedFile.size);
         
         fileElement.innerHTML = `
-            <a href="${blobUrl}" download="${selectedFile.name}" class="file-download-link no-underline">
-                ðŸ“Ž ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)
-            </a>
+            <span class="file-icon">${fileIcon}</span>
+            <span class="file-name">${selectedFile.name}</span>
+            <span class="file-size">${fileSize}</span>
         `;
         
         messageDiv.appendChild(fileElement);
@@ -64,9 +64,12 @@ const handleFileSelect = (e) => {
     selectedFile = e.target.files[0];
     if (selectedFile && selectedFile.size <= 5 * 1024 * 1024) { // 5MB limit
         fileTransferArea.style.display = 'block';
+        const fileIcon = getFileIcon(selectedFile.type);
+        const fileSize = formatFileSize(selectedFile.size);
         filePreview.innerHTML = `
-            <img src="${URL.createObjectURL(selectedFile)}" alt="File preview">
-            <span>${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)</span>
+            <span class="file-icon">${fileIcon}</span>
+            <span class="file-name">${selectedFile.name}</span>
+            <span class="file-size">${fileSize}</span>
         `;
     } else {
         alert('Please select a file up to 5MB in size.');
@@ -87,6 +90,19 @@ const simulateFileTransfer = (fileSize) => {
             }, 1000);
         }
     }, fileSize / 50); // Adjust speed based on file size
+};
+
+const getFileIcon = (fileType) => {
+    if (fileType.startsWith('image/')) return '🖼️';
+    if (fileType.startsWith('video/')) return '🎥';
+    if (fileType.startsWith('audio/')) return '🎵';
+    return '📄';
+};
+
+const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+    return (bytes / 1048576).toFixed(2) + ' MB';
 };
 
 // Clear messages function
