@@ -186,3 +186,24 @@ body {
 .file-download-link.no-underline:hover {
     text-decoration: underline;
 }
+
+.clear-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #ff4d4d;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.clear-button:hover {
+    filter: brightness(0.9);
+}
+
+.clear-button:active {
+    transform: translateY(2px);
+}
