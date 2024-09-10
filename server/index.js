@@ -7,7 +7,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Route for the home page
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    res.sendFile(path.join(__dirname, '../index.html')); // Adjusted path
 });
 
 // Start the server on port 3000
