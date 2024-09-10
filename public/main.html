@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat System with Member List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar for member list -->
+    <div id="member-list">
+        <!--  Members Title and Divider -->
+        <div id="member-title">Members</div>
+        <div id="divider"></div>
+
+        <!-- Member list (with status indicator) -->
+        <div class="member">
+            <div class="avatar">
+                <div class="status-dot online" title="Online"></div>
+            </div>
+            <span>User1</span>
+        </div>
+        <div class="member">
+            <div class="avatar">
+                <div class="status-dot idle" title="Idle"></div>
+            </div>
+            <span>User2</span>
+        </div>
+        <div class="member">
+            <div class="avatar">
+                <div class="status-dot offline" title="Offline"></div>
+            </div>
+            <span>User3</span>
+        </div>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-box">
+            <div class="message message-left">
+                <p>Why is ur name ew on discord</p>
+                <span class="time">11:45 PM</span>
+            </div>
+            <div class="date-divider">1 Jun 2023</div>
+            <div class="message message-right">
+                <p>idk bruh</p>
+                <span class="time">8:02 AM</span>
+            </div>
+            <div class="message message-left">
+                <p>you have to change it or well get cancelled</p>
+                <span class="time">8:32 AM</span>
+            </div>
+            <div class="message message-right">
+                <p>nah bruh trust it aint that big of a deal</p>
+                <span class="time">8:45 PM</span>
+            </div>
+            <div class="date-divider">2 Jun 2023</div>
+            <div class="message message-left">
+                <p>BRUHHH</p>
+                <span class="time">11:02 PM</span>
+            </div>
+        </div>
+        <div class="file-transfer-area" style="display: none;">
+            <div class="file-preview"></div>
+            <div class="file-progress"></div>
+        </div>
+        <div class="input-box">
+            <input type="text" class="input-text" placeholder="Type a message...">
+            <input type="file" id="file-input" style="display: none;">
+            <button class="attach-file-button">📎</button>
+            <button class="send-button">Send</button>
+        </div>
+        <!-- The input prompt is being typed. -->
+        <div id="typing-indicator" style="display: none;">User is typing...</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

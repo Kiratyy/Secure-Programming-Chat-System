@@ -1,0 +1,255 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100vh;
+    margin: 0;
+    background-color: #202225; /* Uniform background color */
+    overflow: hidden;
+}
+
+/* Sidebar styles */
+#member-list {
+    width: 250px;
+    background-color: #2f3136;
+    color: white;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    border-right: 1px solid #202225; /* 右边界线 */
+    margin: 0;
+    padding: 10px;
+}
+
+#member-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+#divider {
+    height: 1px;
+    background-color: #555;
+    margin-bottom: 10px;
+}
+
+.member {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #36393f;
+}
+
+.member:hover {
+    background-color: #3e4147;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: gray;
+    position: relative;
+    margin-right: 10px;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.5); /* Add a black border to the status circle */
+}
+
+.online {
+    background-color: green;
+}
+
+.offline {
+    background-color: gray;
+}
+
+.idle {
+    background-color: yellow;
+}
+
+/* Typing status (new class for typing animation) */
+.typing-status {
+    background-image: url('./images/typing.gif'); /* Typing GIF path */
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none; /*Remove the border */
+}
+
+/* Typing indicator */
+#typing-indicator {
+    font-size: 12px;
+    color: gray;
+    margin: 10px;
+    text-align: left;
+}
+
+/* Chat container styles */
+.chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    background-color: #36393f;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-box {
+    padding: 20px;
+    height: calc(100vh - 120px); /* Ensure the chat box does not overflow. */
+    overflow-y: auto;
+    background-color: #2f3136;
+}
+
+.date-divider {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    margin: 10px 0;
+    position: relative; /* Do not use absolute positioning, ensure it scrolls with the content. */
+    display: flex;
+    align-items: center;
+}
+
+.date-divider::before,
+.date-divider::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background-color: #ccc;
+}
+
+.date-divider::before {
+    margin-right: 10px; /* Adjust the left and right spacing. */
+}
+
+.date-divider::after {
+    margin-left: 10px;
+}
+
+.message {
+    margin: 10px 0;
+    border-radius: 10px;
+    max-width: 80%;
+    color: white;
+    font-size: 14px;
+    padding: 10px;
+    background-color: #3b3e45;
+}
+
+.message-left {
+    align-self: flex-start;
+    background-color: #4d5056;
+    border-radius: 15px 15px 15px 0;
+}
+
+.message-right {
+    align-self: flex-end;
+    background-color: #007bff;
+    border-radius: 15px 15px 0 15px;
+    color: white;
+}
+
+.message .time {
+    font-size: 10px;
+    color: #a0a0a0;
+    display: block;
+    text-align: right;
+    margin-top: 5px;
+}
+
+.input-box {
+    display: flex;
+    padding: 10px;
+    background-color: #2f3136;
+    border-top: 1px solid #202225;
+    height: 60px;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+    background-color: #40444b;
+    color: white;
+}
+
+.input-box button {
+    padding: 10px 20px;
+    background-color: #7289da;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.input-box button:hover {
+    filter: brightness(0.9);
+}
+
+.input-box button:active {
+    transform: translateY(2px);
+}
+
+.file-transfer-area {
+    padding: 10px;
+    background-color: #2f3136;
+    margin-bottom: 10px;
+}
+
+.file-preview {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.file-preview img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.file-progress {
+    height: 5px;
+    background-color: #007bff;
+    width: 0;
+    transition: width 0.3s;
+}
+
+.attach-file-button {
+    background-color: #4caf50;
+    margin-right: 5px;
+}
+
+.file-download-link.no-underline {
+    text-decoration: none;
+    color: white;
+}
+
+.file-download-link.no-underline:hover {
+    text-decoration: underline;
+}
