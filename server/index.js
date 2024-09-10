@@ -1,16 +1,18 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const port = 3000;
 
-// Serve static files from the 'public' directory located outside of 'server'
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Route for the home page
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html')); // Adjusted path
+    res.sendFile(path.join(__dirname, '..', 'public', 'main.html'));
 });
 
-// Start the server on port 3000
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+// Start the server
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Serving static files from: ${path.join(__dirname, '..', 'public')}`);
 });

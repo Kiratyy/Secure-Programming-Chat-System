@@ -6,7 +6,6 @@ const attachFileButton = document.querySelector('.attach-file-button');
 const fileTransferArea = document.querySelector('.file-transfer-area');
 const filePreview = document.querySelector('.file-preview');
 const fileProgress = document.querySelector('.file-progress');
-const clearButton = document.querySelector('.clear-button');
 
 let selectedFile = null;
 
@@ -32,13 +31,13 @@ const sendMessage = (e) => {
         const fileElement = document.createElement('div');
         fileElement.classList.add('file-attachment');
         
-        const fileIcon = getFileIcon(selectedFile.type);
-        const fileSize = formatFileSize(selectedFile.size);
+        // Create a blob URL for the file
+        const blobUrl = URL.createObjectURL(selectedFile);
         
         fileElement.innerHTML = `
-            <span class="file-icon">${fileIcon}</span>
-            <span class="file-name">${selectedFile.name}</span>
-            <span class="file-size">${fileSize}</span>
+            <a href="${blobUrl}" download="${selectedFile.name}" class="file-download-link no-underline">
+                📎 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)
+            </a>
         `;
         
         messageDiv.appendChild(fileElement);
@@ -64,12 +63,9 @@ const handleFileSelect = (e) => {
     selectedFile = e.target.files[0];
     if (selectedFile && selectedFile.size <= 5 * 1024 * 1024) { // 5MB limit
         fileTransferArea.style.display = 'block';
-        const fileIcon = getFileIcon(selectedFile.type);
-        const fileSize = formatFileSize(selectedFile.size);
         filePreview.innerHTML = `
-            <span class="file-icon">${fileIcon}</span>
-            <span class="file-name">${selectedFile.name}</span>
-            <span class="file-size">${fileSize}</span>
+            <img src="${URL.createObjectURL(selectedFile)}" alt="File preview">
+            <span>${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)</span>
         `;
     } else {
         alert('Please select a file up to 5MB in size.');
@@ -92,34 +88,17 @@ const simulateFileTransfer = (fileSize) => {
     }, fileSize / 50); // Adjust speed based on file size
 };
 
-const getFileIcon = (fileType) => {
-    if (fileType.startsWith('image/')) return '🖼️';
-    if (fileType.startsWith('video/')) return '🎥';
-    if (fileType.startsWith('audio/')) return '🎵';
-    return '📄';
-};
-
-const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
-    return (bytes / 1048576).toFixed(2) + ' MB';
-};
-
-// Clear messages function
-const clearMessages = () => {
-    chatBox.innerHTML = ''; 
-};
-
 // Event listeners
 sendButton.addEventListener('click', sendMessage);
+
 inputText.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage(e);
     }
 });
+
 attachFileButton.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFileSelect);
-clearButton.addEventListener('click', clearMessages);
 
 // Add event delegation for file downloads
 chatBox.addEventListener('click', (e) => {
