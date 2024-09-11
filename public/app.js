@@ -8,6 +8,16 @@ const filePreview = document.querySelector('.file-preview');
 const fileProgress = document.querySelector('.file-progress');
 const clearButton = document.querySelector('.clear-button');
 
+function joinChat() {
+    const username = document.getElementById('username').value.trim();
+    if (username) {
+        localStorage.setItem('username', username);
+        window.location.href = '/main.html';
+    } else {
+        alert('Please enter a name.');
+    }
+}
+
 let selectedFile = null;
 
 const sendMessage = (e) => {

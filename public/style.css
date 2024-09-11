@@ -17,6 +17,22 @@ body {
     );
 }
 
+.welcome-container {
+    background-color: #2E3036;
+    padding: 2em;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    color: white;
+}
+.welcome-container h1 {
+    margin-bottom: 1em;
+}
+.welcome-container input {
+    padding: 0.5em;
+    width: 200px;
+    margin-bottom: 1em;
+}
 .username {
     text-align: center;
     margin-left: 250px;
