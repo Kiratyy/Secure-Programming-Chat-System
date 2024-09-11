@@ -27,7 +27,12 @@ body {
 }
 .welcome-container h1 {
     margin-bottom: 1em;
+    font-family: "Playwrite CU", cursive;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
 }
+
 .welcome-container input {
     padding: 0.5em;
     width: 200px;
