@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"> <!-- Updated font style -->
+</head>
+<body>
+    <div class="welcome-container">
+        <h1>Hello, welcome to the chat!</h1>
+        <p>Please enter your name below:</p>
+        <input type="text" id="username" placeholder="Your name" onkeypress="checkEnter(event)"> <!-- Add onkeypress handler -->
+        <br>
+        <button onclick="joinChat()">Join Chat</button>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

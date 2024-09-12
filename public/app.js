@@ -11,23 +11,26 @@ let selectedFile = null;
 let typingTimeout;
 let activityTimeout;
 let isUserTyping = false;
+let lastTimestamp = null; // Track the last timestamp to determine if a new one should be shown
+const timestampThreshold = 30 * 60 * 1000; // 30 minutes
+const storedUsername = localStorage.getItem('username'); // Get stored username
 
 const members = [
-    { id: 'User1', status: 'online' },
+    { id: storedUsername || 'User1', status: 'online' },
     { id: 'User2', status: 'idle' },
     { id: 'User3', status: 'offline' }
 ];
 
 const memberList = document.getElementById('member-list');
 
-// Update the member list and count the number of online/offline members.
+// Update the member list and count the number of online/offline members
 const updateMemberList = () => {
-    memberList.innerHTML = ''; // Clear existing members.
+    memberList.innerHTML = ''; // Clear existing members
 
     let onlineMembers = members.filter(member => member.status === 'online');
     let offlineMembers = members.filter(member => member.status !== 'online');
 
-    // Render the number of online members and the list.
+    // Render the number of online members and the list
     const onlineTitle = document.createElement('div');
     onlineTitle.innerText = `Online - ${onlineMembers.length}`;
     onlineTitle.classList.add('member-section-title');
@@ -38,12 +41,12 @@ const updateMemberList = () => {
         memberList.appendChild(memberDiv);
     });
 
-    // Render the divider.
+    // Render the divider
     const divider = document.createElement('div');
     divider.classList.add('divider');
     memberList.appendChild(divider);
 
-    // Render the number of offline members and the list.
+    // Render the number of offline members and the list
     const offlineTitle = document.createElement('div');
     offlineTitle.innerText = `Offline - ${offlineMembers.length}`;
     offlineTitle.classList.add('member-section-title');
@@ -55,19 +58,20 @@ const updateMemberList = () => {
     });
 };
 
-// Create member elements.
+// Create member elements
 const createMemberElement = (member) => {
     const memberDiv = document.createElement('div');
     memberDiv.classList.add('member');
 
     const avatar = document.createElement('div');
     avatar.classList.add('avatar');
+    avatar.innerHTML = '🧑'; // Avatar for both chat and sidebar
 
     const statusDot = document.createElement('div');
     statusDot.classList.add('status-dot');
 
-    if (member.id === 'User1' && isUserTyping) {
-        statusDot.classList.add('typing-status'); // typing gif
+    if (member.id === storedUsername && isUserTyping) {
+        statusDot.classList.add('typing-status'); // Typing gif
     } else if (member.status === 'online') {
         statusDot.classList.add('online');
         statusDot.title = 'Online';
@@ -89,85 +93,122 @@ const createMemberElement = (member) => {
     return memberDiv;
 };
 
-// Message sending logic.
+// Function to add a timestamp at the top of a message if necessary
+const addTimestampIfNeeded = () => {
+    const now = new Date();
+    if (!lastTimestamp || now - lastTimestamp > timestampThreshold) {
+        const timestampDiv = document.createElement('div');
+        timestampDiv.classList.add('date-divider');
+        
+        let timestampText = '';
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        
+        if (now.toDateString() === today.toDateString()) {
+            timestampText = `Today ${now.toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+        } else if (now.toDateString() === yesterday.toDateString()) {
+            timestampText = `Yesterday ${now.toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+        } else {
+            timestampText = now.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
+        }
+
+        timestampDiv.innerText = timestampText;
+        chatBox.appendChild(timestampDiv);
+        lastTimestamp = now;
+    }
+};
+
+// Message sending logic (remove daily message timestamp suffixes but keep timestamp where necessary)
 const sendMessage = (e) => {
     e.preventDefault();
 
     if (inputText.value.trim() === '' && !selectedFile) {
-        return; // Do not send empty messages.
+        return; // Do not send empty messages
     }
 
-    const timestamp = new Date().toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true });
+    addTimestampIfNeeded(); // Add timestamp if necessary
+
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('message-container'); // New container for each message
+
+    // Add avatar and username outside of message bubble
+    const avatarDiv = document.createElement('div');
+    avatarDiv.classList.add('avatar');
+    avatarDiv.innerHTML = '🧑';  // Simple avatar (replace with actual avatar if needed)
+
+    const usernameSpan = document.createElement('span');
+    usernameSpan.classList.add('username');
+    usernameSpan.textContent = storedUsername;
+
+    messageContainer.appendChild(avatarDiv); // Add avatar
+    messageContainer.appendChild(usernameSpan); // Add username
 
     const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', 'message-right');
+    messageDiv.classList.add('message', 'message-right'); // Message bubble
 
+    // Add message text if available
     if (inputText.value.trim() !== '') {
         const messageText = document.createElement('p');
         messageText.innerText = inputText.value;
         messageDiv.appendChild(messageText);
     }
 
+    // Handle file attachments
     if (selectedFile) {
         const fileElement = document.createElement('div');
         fileElement.classList.add('file-attachment');
         
         const blobUrl = URL.createObjectURL(selectedFile);
-        
         fileElement.innerHTML = `
             <a href="${blobUrl}" download="${selectedFile.name}" class="file-download-link no-underline">
                 📎 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)
             </a>
         `;
-        
         messageDiv.appendChild(fileElement);
-    
         simulateFileTransfer(selectedFile.size);
     }
 
-    const messageTime = document.createElement('span');
-    messageTime.classList.add('time');
-    messageTime.innerText = timestamp;
-
-    messageDiv.appendChild(messageTime);
-    chatBox.appendChild(messageDiv);
+    messageContainer.appendChild(messageDiv); // Add message bubble to container
+    chatBox.appendChild(messageContainer);
     chatBox.scrollTop = chatBox.scrollHeight;
 
     inputText.value = '';
     selectedFile = null;
-    fileTransferArea.style.display = 'none';
+    fileTransferArea.style.display = 'none'; // Hide file transfer UI
 };
 
-// Typing indicator logic.
+// Typing indicator logic
 inputText.addEventListener('input', () => {
     clearTimeout(typingTimeout);
     isUserTyping = true;
-    typingIndicator.style.display = 'block'; // Display "Typing..."
-    updateMemberList();
+    typingIndicator.style.display = 'block'; // Show typing indicator
+    typingIndicator.innerText = `${storedUsername} is typing...`; // Customize typing indicator with username
+    updateMemberList(); // Update member list to show typing status
 
     typingTimeout = setTimeout(() => {
-        typingIndicator.style.display = 'none'; // Hide the "Typing..." indicator after 2 seconds of no input.
+        typingIndicator.style.display = 'none'; // Hide typing indicator
         isUserTyping = false;
-        updateMemberList(); // Update status.
-    }, 2000);
+        updateMemberList(); // Update member list after typing stops
+    }, 2000); // Timeout to hide indicator after 2 seconds of no input
 });
 
-// File upload logic.
+// File upload logic
 const handleFileSelect = (e) => {
     selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.size <= 5 * 1024 * 1024) { // File upload logic with a 5MB limit.
+    if (selectedFile && selectedFile.size <= 5 * 1024 * 1024) { // Check file size (5MB max)
         fileTransferArea.style.display = 'block';
         filePreview.innerHTML = `
             <img src="${URL.createObjectURL(selectedFile)}" alt="File preview">
             <span>${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)</span>
         `;
     } else {
-        alert('文件大小不能超过5MB');
+        alert('File size cannot exceed 5MB');
         selectedFile = null;
     }
 };
 
-// Simulate file transfer.
+// Simulate file transfer progress
 const simulateFileTransfer = (fileSize) => {
     let progress = 0;
     const interval = setInterval(() => {
@@ -183,39 +224,71 @@ const simulateFileTransfer = (fileSize) => {
     }, fileSize / 50);
 };
 
-// Monitor user activity and manage the user's idle status.
+// Monitor user activity and manage the user's idle status
 const monitorActivity = () => {
     clearTimeout(activityTimeout);
     setUserStatus('online');
 
     activityTimeout = setTimeout(() => {
         setUserStatus('idle');
-    }, 10000); // Change to idle status after 10 seconds of inactivity.
+    }, 10000); // Change to idle status after 10 seconds of inactivity
 };
 
-// Set user status.
+// Set user status
 const setUserStatus = (status) => {
-    members[0].status = status; // Assume User1 is the current user.
-    updateMemberList();
+    members[0].status = status; // Assume the current user is User1
+    updateMemberList(); // Update the member list
 };
 
-// Event listener.
+// Event listener for sending a message
 sendButton.addEventListener('click', sendMessage);
 
+// Send message on Enter key press
 inputText.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage(e);
     }
 });
 
+// File upload event listener
 attachFileButton.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFileSelect);
 
-// Monitor user activity.
+// Monitor activity (for status)
 document.addEventListener('keydown', monitorActivity);
 document.addEventListener('mousemove', monitorActivity);
 window.addEventListener('focus', () => setUserStatus('online'));
 window.addEventListener('blur', () => setUserStatus('offline'));
 
-// Initialize the member list.
+// Initialize the member list on load
 updateMemberList();
+
+// Login functionality
+
+// Function to handle username input and redirect to the chat page
+function joinChat() {
+    const username = document.getElementById('username').value.trim();
+    if (username) {
+        localStorage.setItem('username', username);
+        window.location.href = '/main.html'; // Redirect to chat page
+    } else {
+        alert('Please enter your name');
+    }
+}
+
+// Function to check if the 'Enter' key is pressed on the login page
+function checkEnter(event) {
+    if (event.key === 'Enter') {
+        joinChat(); // Call the joinChat function when Enter is pressed
+    }
+}
+
+// Ensure that the username is displayed on the chat page
+window.onload = () => {
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+        document.getElementById('stored-username').textContent = storedUsername;
+        members[0].id = storedUsername; // Update sidebar User1 name to the logged-in username
+        updateMemberList();
+    }
+};
