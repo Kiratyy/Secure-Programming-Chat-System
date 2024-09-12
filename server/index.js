@@ -11,6 +11,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'main.html'));
 });
 
+// Route for the direct message page
+app.get('/directMessage', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'directMessage.html'));
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

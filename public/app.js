@@ -55,7 +55,7 @@ const updateMemberList = () => {
     });
 };
 
-// Create member elements.
+// Create member elements with dropdown functionality.
 const createMemberElement = (member) => {
     const memberDiv = document.createElement('div');
     memberDiv.classList.add('member');
@@ -86,136 +86,48 @@ const createMemberElement = (member) => {
     avatar.appendChild(statusDot);
     memberDiv.appendChild(nameSpan);
 
+    // Create dropdown
+    const dropdown = document.createElement('div');
+    dropdown.classList.add('member-dropdown');
+    dropdown.style.display = 'none';
+
+    const directMessageBtn = document.createElement('button');
+    directMessageBtn.textContent = 'Direct Message';
+    directMessageBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent the dropdown from toggling
+        // Redirect to directMessage.html with the member's ID as a query parameter
+        window.location.href = `directMessage.html?user=${encodeURIComponent(member.id)}`;
+    });
+
+    dropdown.appendChild(directMessageBtn);
+    memberDiv.appendChild(dropdown);
+
+    // Toggle dropdown on click
+    memberDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown(dropdown);
+    });
+
     return memberDiv;
 };
 
-// Message sending logic.
-const sendMessage = (e) => {
-    e.preventDefault();
-
-    if (inputText.value.trim() === '' && !selectedFile) {
-        return; // Do not send empty messages.
-    }
-
-    const timestamp = new Date().toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true });
-
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', 'message-right');
-
-    if (inputText.value.trim() !== '') {
-        const messageText = document.createElement('p');
-        messageText.innerText = inputText.value;
-        messageDiv.appendChild(messageText);
-    }
-
-    if (selectedFile) {
-        const fileElement = document.createElement('div');
-        fileElement.classList.add('file-attachment');
-        
-        const blobUrl = URL.createObjectURL(selectedFile);
-        
-        fileElement.innerHTML = `
-            <a href="${blobUrl}" download="${selectedFile.name}" class="file-download-link no-underline">
-                📎 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)
-            </a>
-        `;
-        
-        messageDiv.appendChild(fileElement);
-    
-        simulateFileTransfer(selectedFile.size);
-    }
-
-    const messageTime = document.createElement('span');
-    messageTime.classList.add('time');
-    messageTime.innerText = timestamp;
-
-    messageDiv.appendChild(messageTime);
-    chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    inputText.value = '';
-    selectedFile = null;
-    fileTransferArea.style.display = 'none';
-};
-
-// Typing indicator logic.
-inputText.addEventListener('input', () => {
-    clearTimeout(typingTimeout);
-    isUserTyping = true;
-    typingIndicator.style.display = 'block'; // Display "Typing..."
-    updateMemberList();
-
-    typingTimeout = setTimeout(() => {
-        typingIndicator.style.display = 'none'; // Hide the "Typing..." indicator after 2 seconds of no input.
-        isUserTyping = false;
-        updateMemberList(); // Update status.
-    }, 2000);
-});
-
-// File upload logic.
-const handleFileSelect = (e) => {
-    selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.size <= 5 * 1024 * 1024) { // File upload logic with a 5MB limit.
-        fileTransferArea.style.display = 'block';
-        filePreview.innerHTML = `
-            <img src="${URL.createObjectURL(selectedFile)}" alt="File preview">
-            <span>${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)</span>
-        `;
-    } else {
-        alert('文件大小不能超过5MB');
-        selectedFile = null;
-    }
-};
-
-// Simulate file transfer.
-const simulateFileTransfer = (fileSize) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += 10;
-        fileProgress.style.width = `${progress}%`;
-        if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                fileTransferArea.style.display = 'none';
-                fileProgress.style.width = '0';
-            }, 1000);
+// Toggle dropdown visibility
+const toggleDropdown = (dropdown) => {
+    const allDropdowns = document.querySelectorAll('.member-dropdown');
+    allDropdowns.forEach(d => {
+        if (d !== dropdown) {
+            d.style.display = 'none';
         }
-    }, fileSize / 50);
+    });
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
 };
 
-// Monitor user activity and manage the user's idle status.
-const monitorActivity = () => {
-    clearTimeout(activityTimeout);
-    setUserStatus('online');
-
-    activityTimeout = setTimeout(() => {
-        setUserStatus('idle');
-    }, 10000); // Change to idle status after 10 seconds of inactivity.
-};
-
-// Set user status.
-const setUserStatus = (status) => {
-    members[0].status = status; // Assume User1 is the current user.
-    updateMemberList();
-};
-
-// Event listener.
-sendButton.addEventListener('click', sendMessage);
-
-inputText.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        sendMessage(e);
-    }
+// Close all dropdowns when clicking outside
+document.addEventListener('click', () => {
+    const allDropdowns = document.querySelectorAll('.member-dropdown');
+    allDropdowns.forEach(d => d.style.display = 'none');
 });
-
-attachFileButton.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', handleFileSelect);
-
-// Monitor user activity.
-document.addEventListener('keydown', monitorActivity);
-document.addEventListener('mousemove', monitorActivity);
-window.addEventListener('focus', () => setUserStatus('online'));
-window.addEventListener('blur', () => setUserStatus('offline'));
 
 // Initialize the member list.
 updateMemberList();
+
