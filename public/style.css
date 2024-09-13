@@ -18,7 +18,6 @@ body {
     height: 100vh;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Add shadow */
-    /* Removed the border-right to remove the line between sidebar and chat */
     margin: 0;
     padding: 10px;
     flex-shrink: 0; /* Prevent the sidebar from being compressed when the content increases */
@@ -35,6 +34,13 @@ body {
     height: 1px;
     background-color: rgba(255, 255, 255, 0.05); /* Less prominent, transparent */
     margin-bottom: 10px;
+}
+
+/* Style for Online and Offline section titles */
+.member-section-title {
+    color: rgba(255, 255, 255, 0.6); /* Lighter color for the Online/Offline titles */
+    font-size: 14px;
+    margin-bottom: 5px;
 }
 
 .member {
@@ -92,8 +98,7 @@ body {
     justify-content: space-between;
     height: 100vh;
     background-color: #36393f;
-    box-shadow: none; /* Ensure there is no shadow between the sidebar and chat */
-    /* Removed border-left to eliminate any additional line */
+    box-shadow: none;
     border-radius: 0;
     overflow: hidden;
     margin: 0;
@@ -140,24 +145,23 @@ body {
     background-color: #007bff;
     color: white;
     position: relative;
-    word-wrap: break-word; /* Enable text wrapping */
-    overflow-wrap: break-word; /* Ensure text wraps properly */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
-/* Dynamic resizing to fit screen width */
 .message {
-    max-width: 70%; /* Set maximum width of the message bubble to 70% of the chat window */
+    max-width: 70%;
 }
 
 @media screen and (max-width: 1200px) {
     .message {
-        max-width: 60%; /* Adjust message bubble width for medium screens */
+        max-width: 60%;
     }
 }
 
 @media screen and (max-width: 768px) {
     .message {
-        max-width: 50%; /* Adjust message bubble width for small screens */
+        max-width: 50%;
     }
 }
 
@@ -166,7 +170,6 @@ body {
     border-radius: 15px 15px 0 15px;
 }
 
-/* Move timestamp to the bottom-right of the message bubble */
 .time {
     font-size: 10px;
     color: #a0a0a0;
@@ -175,7 +178,6 @@ body {
     right: 10px;
 }
 
-/* General styling */
 .input-box {
     display: flex;
     padding: 10px;
@@ -211,26 +213,23 @@ body {
     transform: translateY(2px);
 }
 
-/* Typing indicator (small and faded) */
 #typing-indicator {
-    font-size: 12px; /* Smaller font size */
-    color: rgba(255, 255, 255, 0.6); /* Faded font color */
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
     margin-top: 5px;
     text-align: left;
     padding-left: 15px;
 }
 
-/* Typing status (shows when the user is typing) */
 .typing-status {
-    background-image: url('./images/typing.gif'); /* Typing GIF path */
+    background-image: url('./images/typing.gif');
     background-size: cover;
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: none; /* Remove the border */
+    border: none;
 }
 
-/* File transfer area */
 .file-transfer-area {
     padding: 10px;
     background-color: #2f3136;
@@ -272,9 +271,8 @@ body {
     text-decoration: underline;
 }
 
-/* Login page styling */
 body {
-    background: linear-gradient(135deg, #4b6cb7, #182848); /* Gradient background */
+    background: linear-gradient(135deg, #4b6cb7, #182848);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -284,24 +282,21 @@ body {
     color: #fff;
 }
 
-/* Login container */
 .welcome-container {
-    background-color: rgba(0, 0, 0, 0.7); /* Slight transparency */
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 20px 40px;
     border-radius: 10px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slight shadow effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     color: white;
 }
 
-/* Heading styling */
 .welcome-container h1 {
-    font-family: 'Pacifico', cursive; /* Updated font */
+    font-family: 'Pacifico', cursive;
     font-size: 2.5em;
     margin-bottom: 20px;
 }
 
-/* Input and button styles */
 .welcome-container input[type="text"] {
     padding: 10px;
     width: 80%;
@@ -324,7 +319,6 @@ body {
     background-color: #ddd;
 }
 
-/* Timestamp style for chat */
 .date-divider {
     text-align: center;
     font-size: 14px;
