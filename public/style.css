@@ -18,7 +18,7 @@ body {
     height: 100vh;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Add shadow */
-    border-right: 1px solid #23272A; /* Right border - same as the sidebar background to hide the line */
+    /* Removed the border-right to remove the line between sidebar and chat */
     margin: 0;
     padding: 10px;
     flex-shrink: 0; /* Prevent the sidebar from being compressed when the content increases */
@@ -92,8 +92,8 @@ body {
     justify-content: space-between;
     height: 100vh;
     background-color: #36393f;
-    box-shadow: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.05); /* Left border - now transparent */
+    box-shadow: none; /* Ensure there is no shadow between the sidebar and chat */
+    /* Removed border-left to eliminate any additional line */
     border-radius: 0;
     overflow: hidden;
     margin: 0;
