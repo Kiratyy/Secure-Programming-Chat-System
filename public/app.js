@@ -58,7 +58,7 @@ const updateMemberList = () => {
     });
 };
 
-// Create member elements
+// Create member elements with dropdown functionality
 const createMemberElement = (member) => {
     const memberDiv = document.createElement('div');
     memberDiv.classList.add('member');
@@ -90,8 +90,47 @@ const createMemberElement = (member) => {
     avatar.appendChild(statusDot);
     memberDiv.appendChild(nameSpan);
 
+    // Create dropdown
+    const dropdown = document.createElement('div');
+    dropdown.classList.add('member-dropdown');
+    dropdown.style.display = 'none';
+
+    const directMessageBtn = document.createElement('button');
+    directMessageBtn.textContent = 'Direct Message';
+    directMessageBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent the dropdown from toggling
+        // Redirect to directMessage.html with the member's ID as a query parameter
+        window.location.href = `directMessage.html?user=${encodeURIComponent(member.id)}`;
+    });
+
+    dropdown.appendChild(directMessageBtn);
+    memberDiv.appendChild(dropdown);
+
+    // Toggle dropdown on click
+    memberDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown(dropdown);
+    });
+
     return memberDiv;
 };
+
+// Toggle dropdown visibility
+const toggleDropdown = (dropdown) => {
+    const allDropdowns = document.querySelectorAll('.member-dropdown');
+    allDropdowns.forEach(d => {
+        if (d !== dropdown) {
+            d.style.display = 'none';
+        }
+    });
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+};
+
+// Close all dropdowns when clicking outside
+document.addEventListener('click', () => {
+    const allDropdowns = document.querySelectorAll('.member-dropdown');
+    allDropdowns.forEach(d => d.style.display = 'none');
+});
 
 // Function to add a timestamp at the top of a message if necessary
 const addTimestampIfNeeded = () => {
@@ -119,7 +158,7 @@ const addTimestampIfNeeded = () => {
     }
 };
 
-// Message sending logic (remove daily message timestamp suffixes but keep timestamp where necessary)
+// Message sending logic
 const sendMessage = (e) => {
     e.preventDefault();
 

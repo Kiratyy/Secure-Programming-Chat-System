@@ -13,12 +13,12 @@ body {
 /* Sidebar styles */
 #member-list {
     width: 250px; /* Fix the sidebar width to prevent it from being compressed */
-    background-color: #2f3136;
+    background-color: #23272A; /* Darkened the sidebar background */
     color: white;
     height: 100vh;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Add shadow */
-    border-right: 1px solid #202225; /* Right border */
+    border-right: 1px solid #23272A; /* Right border - same as the sidebar background to hide the line */
     margin: 0;
     padding: 10px;
     flex-shrink: 0; /* Prevent the sidebar from being compressed when the content increases */
@@ -33,7 +33,7 @@ body {
 
 #divider {
     height: 1px;
-    background-color: #555;
+    background-color: rgba(255, 255, 255, 0.05); /* Less prominent, transparent */
     margin-bottom: 10px;
 }
 
@@ -111,6 +111,7 @@ body {
     height: 100vh;
     background-color: #36393f;
     box-shadow: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.05); /* Left border - now transparent */
     border-radius: 0;
     overflow: hidden;
     margin: 0;
@@ -197,7 +198,7 @@ body {
     display: flex;
     padding: 10px;
     background-color: #2f3136;
-    border-top: 1px solid #202225;
+    border-top: 1px solid rgba(255, 255, 255, 0.05); /* Top border - now transparent */
     height: 60px;
 }
 
