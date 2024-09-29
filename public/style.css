@@ -1,48 +1,149 @@
 /* Global styles */
 body {
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    height: 100vh;
     margin: 0;
-    background-color: #202225; /* Uniform background color */
+    padding: 0;
+    height: 100vh;
+    background-color: #202225;
+    color: #fff;
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
     overflow: hidden;
+}
+
+/* Styles for the login and register pages */
+body.login-page, body.register-page {
+    background: linear-gradient(135deg, #4b6cb7, #182848);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container for welcome text and input fields */
+.welcome-container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 400px; /* Limit the container width */
+}
+
+/* Style for headers in the welcome container */
+.welcome-container h1 {
+    margin-bottom: 20px;
+}
+
+/* Input group for text fields with icons */
+.input-group {
+    position: relative;
+    margin-bottom: 40px; /* Add larger margin to separate fields */
+    width: 100%;
+}
+
+.input-group.error input {
+    border: 2px solid red; /* Red border to indicate error */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 10px 10px 50px; /* Add extra padding for the icon */
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+    box-sizing: border-box;
+}
+
+/* Icon inside input field */
+.input-group img.input-icon {
+    position: absolute;
+    left: 15px; /* Position the icon to be inside the input */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    pointer-events: none; /* Prevent icon from interfering with input interaction */
+}
+
+/* Error message style */
+.error-message {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 5px;
+    margin-bottom: -20px; /* Adjust for spacing between input fields */
+    text-align: left;
+    padding-left: 50px; /* Align error message with the input text */
+}
+
+/* Button styling */
+.welcome-container button {
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.welcome-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Text and links in the welcome container */
+.welcome-container p {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.welcome-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.welcome-container a:hover {
+    text-decoration: underline;
 }
 
 /* Sidebar styles */
 #member-list {
-    width: 250px; /* Fix the sidebar width to prevent it from being compressed */
-    background-color: #23272A; /* Darkened the sidebar background */
+    width: 250px;
+    background-color: #23272A;
     color: white;
     height: 100vh;
     overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Add shadow */
-    margin: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
     padding: 10px;
-    flex-shrink: 0; /* Prevent the sidebar from being compressed when the content increases */
+    flex-shrink: 0;
 }
 
+/* Member title in sidebar */
 #member-title {
     font-size: 18px;
     margin-bottom: 10px;
     font-weight: bold;
-    color: white;
 }
 
+/* Divider in sidebar */
 #divider {
     height: 1px;
-    background-color: rgba(255, 255, 255, 0.05); /* Less prominent, transparent */
+    background-color: rgba(255, 255, 255, 0.05);
     margin-bottom: 10px;
 }
 
-/* Style for Online and Offline section titles */
+/* Section title for member status */
 .member-section-title {
-    color: rgba(255, 255, 255, 0.6); /* Lighter color for the Online/Offline titles */
+    color: rgba(255, 255, 255, 0.6);
     font-size: 14px;
     margin-bottom: 5px;
 }
 
+/* Each member item in the sidebar */
 .member {
     display: flex;
     align-items: center;
@@ -52,10 +153,12 @@ body {
     background-color: #36393f;
 }
 
+/* Member hover effect */
 .member:hover {
     background-color: #3e4147;
 }
 
+/* Avatar style */
 .avatar {
     width: 40px;
     height: 40px;
@@ -68,6 +171,7 @@ body {
     justify-content: center;
 }
 
+/* Status dot for members */
 .status-dot {
     position: absolute;
     bottom: 2px;
@@ -75,22 +179,25 @@ body {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    border: 2px solid rgba(0, 0, 0, 0.5); /* Add a black border to the status circle */
+    border: 2px solid rgba(0, 0, 0, 0.5);
 }
 
+/* Online status */
 .online {
     background-color: green;
 }
 
+/* Offline status */
 .offline {
     background-color: gray;
 }
 
+/* Idle status */
 .idle {
     background-color: yellow;
 }
 
-/* Chat container styles */
+/* Main chat container */
 .chat-container {
     flex-grow: 1;
     display: flex;
@@ -98,39 +205,26 @@ body {
     justify-content: space-between;
     height: 100vh;
     background-color: #36393f;
-    box-shadow: none;
-    border-radius: 0;
     overflow: hidden;
-    margin: 0;
-    padding: 0;
 }
 
+/* Chat box styles */
 .chat-box {
     padding: 20px;
     height: calc(100vh - 120px);
     overflow-y: auto;
     background-color: #2f3136;
-    flex-grow: 1; /* Chat box expands dynamically based on the content. */
+    flex-grow: 1;
 }
 
-/* Message container to hold avatar, username, and message bubble */
+/* Individual message container */
 .message-container {
     display: flex;
     align-items: flex-start;
     margin-bottom: 10px;
 }
 
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: gray;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+/* Username style */
 .username {
     font-weight: bold;
     color: #7289da;
@@ -147,12 +241,10 @@ body {
     position: relative;
     word-wrap: break-word;
     overflow-wrap: break-word;
-}
-
-.message {
     max-width: 70%;
 }
 
+/* Responsive message bubble sizing */
 @media screen and (max-width: 1200px) {
     .message {
         max-width: 60%;
@@ -165,11 +257,13 @@ body {
     }
 }
 
+/* Message bubble alignment */
 .message-right {
     background-color: #007bff;
     border-radius: 15px 15px 0 15px;
 }
 
+/* Timestamp for each message */
 .time {
     font-size: 10px;
     color: #a0a0a0;
@@ -178,6 +272,7 @@ body {
     right: 10px;
 }
 
+/* Input box for chat */
 .input-box {
     display: flex;
     padding: 10px;
@@ -185,6 +280,7 @@ body {
     height: 60px;
 }
 
+/* Text input in chat */
 .input-box input {
     flex: 1;
     padding: 10px;
@@ -196,6 +292,7 @@ body {
     color: white;
 }
 
+/* Send button in chat */
 .input-box button {
     padding: 10px 20px;
     background-color: #7289da;
@@ -205,14 +302,12 @@ body {
     cursor: pointer;
 }
 
+/* Send button hover effect */
 .input-box button:hover {
     filter: brightness(0.9);
 }
 
-.input-box button:active {
-    transform: translateY(2px);
-}
-
+/* Typing indicator */
 #typing-indicator {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.6);
@@ -221,21 +316,14 @@ body {
     padding-left: 15px;
 }
 
-.typing-status {
-    background-image: url('./images/typing.gif');
-    background-size: cover;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: none;
-}
-
+/* File transfer area */
 .file-transfer-area {
     padding: 10px;
     background-color: #2f3136;
     margin-bottom: 10px;
 }
 
+/* File preview in chat */
 .file-preview {
     display: flex;
     align-items: center;
@@ -243,6 +331,7 @@ body {
     color: white;
 }
 
+/* File preview image */
 .file-preview img {
     width: 50px;
     height: 50px;
@@ -250,6 +339,7 @@ body {
     margin-right: 10px;
 }
 
+/* File transfer progress bar */
 .file-progress {
     height: 5px;
     background-color: #007bff;
@@ -257,11 +347,13 @@ body {
     transition: width 0.3s;
 }
 
+/* Attach file button */
 .attach-file-button {
     background-color: #4caf50;
     margin-right: 5px;
 }
 
+/* File download link */
 .file-download-link.no-underline {
     text-decoration: none;
     color: white;
@@ -271,57 +363,20 @@ body {
     text-decoration: underline;
 }
 
-body {
-    background: linear-gradient(135deg, #4b6cb7, #182848);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
-    color: #fff;
-}
-
-.welcome-container {
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px 40px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    color: white;
-}
-
-.welcome-container h1 {
-    font-family: 'Pacifico', cursive;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
-
-.welcome-container input[type="text"] {
-    padding: 10px;
-    width: 80%;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 5px;
-}
-
-.welcome-container button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #fff;
-    color: #000;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.welcome-container button:hover {
-    background-color: #ddd;
-}
-
+/* Date divider in chat */
 .date-divider {
     text-align: center;
     font-size: 14px;
     color: #bbb;
     margin: 15px 0;
+}
+
+/* Typing indicator for the sidebar */
+.typing-status {
+    background-image: url('./images/typing.gif');
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
 }

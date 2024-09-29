@@ -331,3 +331,63 @@ window.onload = () => {
         updateMemberList();
     }
 };
+
+// Function to handle form submission on register page
+function register() {
+    const username = document.getElementById('new-username');
+    const password = document.getElementById('new-password');
+    const confirmPassword = document.getElementById('confirm-password');
+    
+    let hasError = false;
+    clearErrors(); // Clear any previous errors
+
+    if (username.value.trim() === '') {
+        showError(username, "Username is required");
+        hasError = true;
+    }
+
+    if (password.value.trim() === '') {
+        showError(password, "Password is required");
+        hasError = true;
+    }
+
+    if (confirmPassword.value.trim() === '') {
+        showError(confirmPassword, "Confirm password is required");
+        hasError = true;
+    } else if (confirmPassword.value !== password.value) {
+        showError(confirmPassword, "Passwords do not match");
+        hasError = true;
+    }
+
+    if (!hasError) {
+        window.location.href = 'landing.html';
+    }
+}
+
+// Function to show error message
+function showError(input, message) {
+    const inputGroup = input.parentElement;
+    inputGroup.classList.add('error');
+
+    let errorMessage = document.createElement('p');
+    errorMessage.classList.add('error-message');
+    errorMessage.textContent = message;
+
+    if (!inputGroup.querySelector('.error-message')) {
+        inputGroup.appendChild(errorMessage);
+    }
+
+    errorMessage.style.display = 'block';
+}
+
+// Function to clear previous errors
+function clearErrors() {
+    const inputGroups = document.querySelectorAll('.input-group');
+    inputGroups.forEach(group => {
+        group.classList.remove('error');
+        const errorMessage = group.querySelector('.error-message');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    });
+}
