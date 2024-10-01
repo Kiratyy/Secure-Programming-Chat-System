@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Chat</title>
+    <title>Welcome to The Chat</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="login-page">
     <div class="welcome-container">
-        <h1>Hello, welcome to the chat!</h1>
-        <p>Please enter your name below:</p>
-        <input type="text" id="username" placeholder="Your name">
-        <br>
-        <button onclick="joinChat()">Join Chat</button>
+        <h1>Welcome to The Chat</h1>
+        
+        <div class="input-group">
+            <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
+            <input type="text" id="username" placeholder="Username" onkeypress="checkEnter(event)">
+        </div>
+        
+        <div class="input-group">
+            <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
+            <input type="password" id="password" placeholder="Password" onkeypress="checkEnter(event)">
+        </div>
+        
+        <button class="button-style" onclick="joinChat()">Login</button>
+        
+        <p>Don't have an account? <a href="register.html">Create account</a></p>
     </div>
     <script src="app.js"></script>
 </body>

@@ -1,144 +1,287 @@
+
+/* Global styles */
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-color: #202225;
+    color: #fff;
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    overflow: hidden;
+}
+
+/* Styles for the login and register pages */
+body.login-page, body.register-page {
+    background: linear-gradient(135deg, #4b6cb7, #182848);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-image: linear-gradient(
-        23deg,
-        hsl(49deg 100% 69%) 0%,
-        hsl(16deg 80% 61%) 2%,
-        hsl(330deg 81% 34%) 12%,
-        hsl(259deg 100% 15%) 50%,
-        hsl(212deg 100% 25%) 88%,
-        hsl(197deg 100% 30%) 98%,
-        hsl(183deg 79% 36%) 100%
-    );
 }
 
+/* Container for welcome text and input fields */
 .welcome-container {
-    background-color: #2E3036;
-    padding: 2em;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px 40px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
     text-align: center;
-    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 400px; /* Limit the container width */
 }
+
+/* Style for headers in the welcome container */
 .welcome-container h1 {
-    margin-bottom: 1em;
-    font-family: "Playwrite CU", cursive;
-    font-optical-sizing: auto;
-    font-weight: 300;
-    font-style: normal;
+    margin-bottom: 20px;
 }
 
-.welcome-container input {
-    padding: 0.5em;
-    width: 200px;
-    margin-bottom: 1em;
-}
-.username {
-    text-align: center;
-    margin-left: 250px;
-    white-space: nowrap;
-    margin-bottom: 500px;
+/* Input group for text fields with icons */
+.input-group {
+    position: relative;
+    margin-bottom: 40px; /* Add larger margin to separate fields */
+    width: 100%;
 }
 
+.input-group.error input {
+    border: 2px solid red; /* Red border to indicate error */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 10px 10px 50px; /* Add extra padding for the icon */
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+    box-sizing: border-box;
+}
+
+/* Icon inside input field */
+.input-group img.input-icon {
+    position: absolute;
+    left: 15px; /* Position the icon to be inside the input */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    pointer-events: none; /* Prevent icon from interfering with input interaction */
+}
+
+/* Error message style */
+.error-message {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 5px;
+    margin-bottom: -20px; /* Adjust for spacing between input fields */
+    text-align: left;
+    padding-left: 50px; /* Align error message with the input text */
+}
+
+/* Button styling */
+.welcome-container button {
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.welcome-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Text and links in the welcome container */
+.welcome-container p {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.welcome-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.welcome-container a:hover {
+    text-decoration: underline;
+}
+
+/* Sidebar styles */
+#member-list {
+    width: 250px;
+    background-color: #23272A;
+    color: white;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+/* Member title in sidebar */
+#member-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Divider in sidebar */
+#divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.05);
+    margin-bottom: 10px;
+}
+
+/* Section title for member status */
+.member-section-title {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* Each member item in the sidebar */
+.member {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #36393f;
+}
+
+/* Member hover effect */
+.member:hover {
+    background-color: #3e4147;
+}
+
+/* Avatar style */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: gray;
+    position: relative;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Status dot for members */
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+/* Online status */
+.online {
+    background-color: green;
+}
+
+/* Offline status */
+.offline {
+    background-color: gray;
+}
+
+/* Idle status */
+.idle {
+    background-color: yellow;
+}
+
+/* Main chat container */
 .chat-container {
-    width: 900px;
-    height: 750px;
-    background-color: #2E3036;
-    box-shadow: 0 0 1.25em 0.5em #c3c3c333;
-    border-radius: 10mm;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative; /* Necessary for relative positioning of the chat box */
-    overflow: hidden; /* Prevent overflow beyond container */
+    height: 100vh;
+    background-color: #36393f;
+    overflow: hidden;
 }
 
+/* Chat box styles */
 .chat-box {
-    padding: 10px;
-    height: 650px; /* Fixed height to ensure it stays constrained */
-    overflow-y: auto; /* Allows vertical scrolling for messages */
+    padding: 20px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    background-color: #2f3136;
     flex-grow: 1;
-    margin-bottom: 20px; /* Space between the chat box and input field */
-    box-sizing: border-box; /* Ensures padding is considered in height calculation */
 }
 
-.chat-box::-webkit-scrollbar{
-    display: none;
+/* Individual message container */
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
 }
 
-.message {
-    margin: 10px 0;
-    border-radius: 10px;
-    max-width: 80%;
-    color: white;
-    font-size: 14px;
-    padding: 10px;
-    background-color: #3a3b3f;
-    position: relative;
-    overflow-wrap: break-word; /* Ensure text breaks properly */
-}
-
-.message-left {
-    align-self: flex-start;
-    background-color: #4d4e52;
-    border-radius: 15px 15px 15px 0;
-}
-
-.message-right {
-    align-self: flex-end;
-    background-color: #007bff;
-    border-radius: 15px 15px 0 15px;
-    color: white;
-}
-
-.message .time {
-    font-size: 10px;
-    color: #a0a0a0;
-    display: block;
-    text-align: right;
+/* Username style */
+.username {
+    font-weight: bold;
+    color: #7289da;
+    margin-right: 10px;
     margin-top: 5px;
 }
 
-.date-divider {
-    text-align: center;
-    font-size: 12px;
-    color: #555;
-    margin: 10px 0;
+/* Message bubble */
+.message {
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #007bff;
+    color: white;
     position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 70%;
 }
 
-.date-divider::before,
-.date-divider::after {
-    content: "";
+/* Responsive message bubble sizing */
+@media screen and (max-width: 1200px) {
+    .message {
+        max-width: 60%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .message {
+        max-width: 50%;
+    }
+}
+
+/* Message bubble alignment */
+.message-right {
+    background-color: #007bff;
+    border-radius: 15px 15px 0 15px;
+}
+
+/* Timestamp for each message */
+.time {
+    font-size: 10px;
+    color: #a0a0a0;
     position: absolute;
-    top: 50%;
-    width: 40%;
-    height: 1px;
-    background-color: #ccc;
+    bottom: 5px;
+    right: 10px;
 }
 
-.date-divider::before {
-    left: 0;
-}
-
-.date-divider::after {
-    right: 0;
-}
-
+/* Input box for chat */
 .input-box {
     display: flex;
     padding: 10px;
-    background-color: #2E3036;
-    border-radius: 0 0 10px 10px;
-    position: sticky;
-    bottom: 0;
+    background-color: #2f3136;
+    height: 60px;
 }
 
+/* Text input in chat */
 .input-box input {
     flex: 1;
     padding: 10px;
@@ -146,43 +289,42 @@ body {
     border-radius: 20px;
     margin-right: 10px;
     outline: none;
-    background-color: #a9a9a9;
-    margin-left: 8px;
+    background-color: #40444b;
+    color: white;
 }
 
+/* Send button in chat */
 .input-box button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #7289da;
     border: none;
     border-radius: 20px;
     color: white;
     cursor: pointer;
 }
 
+/* Send button hover effect */
 .input-box button:hover {
     filter: brightness(0.9);
 }
 
-.input-box button:active {
-    transform: translateY(2px);
+/* Typing indicator */
+#typing-indicator {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 5px;
+    text-align: left;
+    padding-left: 15px;
 }
 
-.input-box .clear-button {
-    background-color: #ff4d4d;
-    color: white;
-}
-
-.input-box .attach-file-button{
-    margin-right: 8px;
-}
-
+/* File transfer area */
 .file-transfer-area {
     padding: 10px;
-    background-color: #3a3b3f;
-    border-radius: 10px;
+    background-color: #2f3136;
     margin-bottom: 10px;
 }
 
+/* File preview in chat */
 .file-preview {
     display: flex;
     align-items: center;
@@ -190,6 +332,7 @@ body {
     color: white;
 }
 
+/* File preview image */
 .file-preview img {
     width: 50px;
     height: 50px;
@@ -197,6 +340,7 @@ body {
     margin-right: 10px;
 }
 
+/* File transfer progress bar */
 .file-progress {
     height: 5px;
     background-color: #007bff;
@@ -204,11 +348,13 @@ body {
     transition: width 0.3s;
 }
 
+/* Attach file button */
 .attach-file-button {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     margin-right: 5px;
 }
 
+/* File download link */
 .file-download-link.no-underline {
     text-decoration: none;
     color: white;
@@ -216,4 +362,22 @@ body {
 
 .file-download-link.no-underline:hover {
     text-decoration: underline;
+}
+
+/* Date divider in chat */
+.date-divider {
+    text-align: center;
+    font-size: 14px;
+    color: #bbb;
+    margin: 15px 0;
+}
+
+/* Typing indicator for the sidebar */
+.typing-status {
+    background-image: url('./images/typing.gif');
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
 }

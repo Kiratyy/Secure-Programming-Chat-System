@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="register-page">
+    <div class="welcome-container">
+        <h1>Create New Account</h1>
+
+        <!-- Username input with placeholder -->
+        <div class="input-group">
+            <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
+            <input type="text" id="new-username" placeholder="Username">
+        </div>
+
+        <!-- Password input with placeholder -->
+        <div class="input-group">
+            <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
+            <input type="password" id="new-password" placeholder="Password">
+        </div>
+
+        <!-- Confirm password input with placeholder -->
+        <div class="input-group">
+            <img src="./images/password-icon.jpg" class="input-icon" alt="Confirm Password Icon">
+            <input type="password" id="confirm-password" placeholder="Confirm password">
+        </div>
+
+        <!-- Create account button -->
+        <button class="button-style" onclick="register()">Create account</button>
+        
+        <p>Already have an account? <a href="landing.html">Log in</a></p>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
