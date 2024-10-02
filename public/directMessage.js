@@ -6,135 +6,214 @@ const attachFileButton = document.querySelector('.attach-file-button');
 const fileTransferArea = document.querySelector('.file-transfer-area');
 const filePreview = document.querySelector('.file-preview');
 const fileProgress = document.querySelector('.file-progress');
-const clearButton = document.querySelector('.clear-button');
+const typingIndicator = document.getElementById('typing-indicator');
+const recipientName = document.getElementById('recipient-name');
+const backButton = document.getElementById('back-button');
 
-function joinChat() {
-    const username = document.getElementById('username').value.trim();
-    if (username) {
-        localStorage.setItem('username', username);
-        window.location.href = '/main.html';
-    } else {
-        alert('Please enter a name.');
+let selectedFiles = [];
+let typingTimeout;
+let isUserTyping = false;
+const storedUsername = localStorage.getItem('username');
+const recipient = new URLSearchParams(window.location.search).get('user');
+
+recipientName.textContent = recipient;
+
+// WebSocket connection setup
+const ws = new WebSocket('ws://localhost:8080');
+
+ws.onopen = () => {
+    console.log('Connected to WebSocket server');
+    ws.send(JSON.stringify({ type: 'register', userId: storedUsername }));
+};
+
+ws.onerror = (error) => {
+    console.error('WebSocket error:', error);
+};
+
+ws.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+
+    if (message.type === 'private-message' && (message.from === recipient || message.to === recipient)) {
+        displayMessage(message.from, message.content, message.from === storedUsername, new Date(message.timestamp));
     }
-}
 
-let selectedFile = null;
-
-const statusMessage = document.querySelector('.chat-status-message');
-
-const sendMessage = (e) => {
-    e.preventDefault();
-
-    // Hide the status message as soon as a message is sent
-    if (statusMessage) {
-        statusMessage.style.display = 'none';
+    if (message.type === 'file-transfer' && (message.from === recipient || message.to === recipient)) {
+        receiveFile(message.from, message.fileName, message.fileSize, message.fileType, message.fileData);
     }
 
-    if (inputText.value.trim() === '' && !selectedFile) {
-        return; // Do not send an empty message or if no file is selected
-    }
+    // ... 其他必要的消息处理 ...
+};
 
-    const timestamp = new Date().toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true });
+// 添加显示消息的函数
+const displayMessage = (from, content, isOwnMessage, timestamp) => {
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('message-container');
+
+    const timeDiv = document.createElement('div');
+    timeDiv.classList.add('message-time');
+    timeDiv.textContent = formatMessageTime(timestamp);
+    messageContainer.appendChild(timeDiv);
+
+    const messageContentWrapper = document.createElement('div');
+    messageContentWrapper.classList.add('message-content-wrapper');
+
+    const avatarDiv = document.createElement('div');
+    avatarDiv.classList.add('avatar');
+    avatarDiv.innerHTML = '🧑';
+
+    const messageContent = document.createElement('div');
+    messageContent.classList.add('message-content');
+
+    const usernameSpan = document.createElement('span');
+    usernameSpan.classList.add('username');
+    usernameSpan.textContent = from;
 
     const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', 'message-right');
+    messageDiv.classList.add('message', isOwnMessage ? 'message-right' : 'message-left');
 
-    if (inputText.value.trim() !== '') {
-        const messageText = document.createElement('p');
-        messageText.innerText = inputText.value;
-        messageDiv.appendChild(messageText);
-    }
+    const messageText = document.createElement('p');
+    messageText.innerText = content;
+    messageDiv.appendChild(messageText);
 
-    if (selectedFile) {
-        const fileElement = document.createElement('div');
-        fileElement.classList.add('file-attachment');
-        
-        // Create a blob URL for the file
-        const blobUrl = URL.createObjectURL(selectedFile);
-        
+    messageContent.appendChild(usernameSpan);
+    messageContent.appendChild(messageDiv);
+
+    messageContentWrapper.appendChild(avatarDiv);
+    messageContentWrapper.appendChild(messageContent);
+
+    messageContainer.appendChild(messageContentWrapper);
+    chatBox.appendChild(messageContainer);
+    chatBox.scrollTop = chatBox.scrollHeight;
+};
+
+// 添加接收文件的函数
+const receiveFile = (from, fileName, fileSize, fileType, fileData) => {
+    const blob = new Blob([Uint8Array.from(atob(fileData), c => c.charCodeAt(0))], { type: fileType });
+    const url = URL.createObjectURL(blob);
+    displayFile(from, { name: fileName, size: fileSize, url: url, type: fileType }, from === storedUsername);
+};
+
+// 添加显示文件的函数
+const displayFile = (from, file, isOwnFile) => {
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('message-container');
+
+    const avatarDiv = document.createElement('div');
+    avatarDiv.classList.add('avatar');
+    avatarDiv.innerHTML = '🧑';
+
+    const usernameSpan = document.createElement('span');
+    usernameSpan.classList.add('username');
+    usernameSpan.textContent = from;
+
+    const messageContent = document.createElement('div');
+    messageContent.classList.add('message-content');
+
+    messageContainer.appendChild(avatarDiv);
+    messageContainer.appendChild(messageContent);
+
+    messageContent.appendChild(usernameSpan);
+
+    const fileElement = document.createElement('div');
+    fileElement.classList.add('file-attachment', isOwnFile ? 'message-right' : 'message-left');
+    
+    if (file.type.startsWith('image/')) {
         fileElement.innerHTML = `
-            <a href="${blobUrl}" download="${selectedFile.name}" class="file-download-link no-underline">
-                📎 ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)
+            <img src="${file.url}" alt="${file.name}" class="file-preview-image">
+            <a href="${file.url}" download="${file.name}" class="file-download-link">
+                📎 ${file.name} (${(file.size / 1024).toFixed(2)} KB)
             </a>
         `;
-        
-        messageDiv.appendChild(fileElement);
-    
-        // Simulate file transfer
-        simulateFileTransfer(selectedFile.size);
-    }
-
-    const messageTime = document.createElement('span');
-    messageTime.classList.add('time');
-    messageTime.innerText = timestamp;
-
-    messageDiv.appendChild(messageTime);
-    chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    inputText.value = '';
-    selectedFile = null;
-    fileTransferArea.style.display = 'none';
-};
-
-
-const handleFileSelect = (e) => {
-    selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.size <= 5 * 1024 * 1024) { // 5MB limit
-        fileTransferArea.style.display = 'block';
-        filePreview.innerHTML = `
-            <img src="${URL.createObjectURL(selectedFile)}" alt="File preview">
-            <span>${selectedFile.name} (${(selectedFile.size / 1024).toFixed(2)} KB)</span>
-        `;
     } else {
-        alert('Please select a file up to 5MB in size.');
-        selectedFile = null;
+        fileElement.innerHTML = `
+            <a href="${file.url}" download="${file.name}" class="file-download-link">
+                📎 ${file.name} (${(file.size / 1024).toFixed(2)} KB)
+            </a>
+        `;
     }
+
+    messageContent.appendChild(fileElement);
+    chatBox.appendChild(messageContainer);
+    chatBox.scrollTop = chatBox.scrollHeight;
 };
 
-const simulateFileTransfer = (fileSize) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += 10;
-        fileProgress.style.width = `${progress}%`;
-        if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                fileTransferArea.style.display = 'none';
-                fileProgress.style.width = '0';
-            }, 1000);
-        }
-    }, fileSize / 50); // Adjust speed based on file size
+// 修改发送私信的函数
+const sendPrivateMessage = (content) => {
+    ws.send(JSON.stringify({
+        type: 'private-message',
+        from: storedUsername,
+        to: recipient,
+        content: content
+    }));
+    displayMessage(storedUsername, content, true, new Date());
 };
 
-const clearMessages = () => {
-    chatBox.innerHTML = ''; 
+// 修改发送文件的函数
+const sendPrivateFile = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const fileData = e.target.result.split(',')[1];
+        ws.send(JSON.stringify({
+            type: 'file-transfer',
+            from: storedUsername,
+            to: recipient,
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.type,
+            fileData: fileData
+        }));
+        displayFile(storedUsername, { name: file.name, size: file.size, url: URL.createObjectURL(file), type: file.type }, true);
+    };
+    reader.readAsDataURL(file);
 };
 
-// Event listeners
+// 添加处理文件选择的函数
+const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        sendPrivateFile(file);
+    }
+    fileInput.value = ''; // 重置文件输入以允许选择相同的文件
+};
+
+// 添加事件监听器
 sendButton.addEventListener('click', sendMessage);
 
 inputText.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        sendMessage(e);
+        sendMessage();
     }
 });
 
 attachFileButton.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFileSelect);
-clearButton.addEventListener('click', clearMessages);
 
-// Add event delegation for file downloads
-chatBox.addEventListener('click', (e) => {
-    if (e.target.classList.contains('file-download-link')) {
-        e.preventDefault();
-        const link = document.createElement('a');
-        link.href = e.target.href;
-        link.download = e.target.download;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+backButton.addEventListener('click', () => {
+    window.location.href = 'main.html';
 });
 
+// 添加 sendMessage 函数
+function sendMessage() {
+    const content = inputText.value.trim();
+    if (content) {
+        sendPrivateMessage(content);
+        inputText.value = '';
+    }
+}
 
+// ... 其他必要的代码 ...
+
+// 修改 formatMessageTime 函数
+const formatMessageTime = (date) => {
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === now.toDateString()) {
+        return `Today ${date.toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+    } else if (date.toDateString() === yesterday.toDateString()) {
+        return `Yesterday ${date.toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+    } else {
+        return date.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
+    }
+};

@@ -25,5 +25,12 @@
         <p>Don't have an account? <a href="register.html">Create account</a></p>
     </div>
     <script src="app.js"></script>
+    <script>
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                joinChat();
+            }
+        });
+    </script>
 </body>
 </html>

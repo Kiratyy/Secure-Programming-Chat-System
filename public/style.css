@@ -41,6 +41,8 @@ body.login-page, body.register-page {
     position: relative;
     margin-bottom: 40px; /* Add larger margin to separate fields */
     width: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .input-group.error input {
@@ -61,8 +63,6 @@ body.login-page, body.register-page {
 .input-group img.input-icon {
     position: absolute;
     left: 15px; /* Position the icon to be inside the input */
-    top: 50%;
-    transform: translateY(-50%);
     width: 24px;
     height: 24px;
     pointer-events: none; /* Prevent icon from interfering with input interaction */
@@ -118,8 +118,46 @@ body.login-page, body.register-page {
     height: 100vh;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    padding: 20px 10px 10px; /* Increase top padding */
     flex-shrink: 0;
+    position: relative; /* Add this line */
+}
+
+.members-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px; /* Reduced from 7px to 4px */
+    padding-bottom: 0; /* Reduced from 2px to 0 */
+    padding-top: 2px;
+}
+
+.members-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0;
+    margin-top: 2px;
+}
+
+/* Add new divider style */
+.members-divider {
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 0 2px 0; /* Changed from 2px 0 to 0 0 2px 0 */
+}
+
+.message-bell-container {
+    position: absolute;
+    top: 55px;
+    right: 10px;
+}
+
+.message-bell-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin-top: 12px;
 }
 
 /* Member title in sidebar */
@@ -140,7 +178,8 @@ body.login-page, body.register-page {
 .member-section-title {
     color: rgba(255, 255, 255, 0.6);
     font-size: 14px;
-    margin-bottom: 5px;
+    margin-top: 10px; /* Increase top margin */
+    margin-bottom: 10px; /* Increase bottom margin */
 }
 
 /* Each member item in the sidebar */
@@ -151,6 +190,12 @@ body.login-page, body.register-page {
     margin-bottom: 10px;
     border-radius: 8px;
     background-color: #36393f;
+    justify-content: space-between; /* Add this line */
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
 }
 
 /* Member hover effect */
@@ -162,6 +207,8 @@ body.login-page, body.register-page {
 .avatar {
     width: 40px;
     height: 40px;
+    min-width: 40px; /* Add this line */
+    min-height: 40px; /* Add this line */
     border-radius: 50%;
     background-color: gray;
     position: relative;
@@ -169,6 +216,7 @@ body.login-page, body.register-page {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; /* Add this line */
 }
 
 /* Status dot for members */
@@ -222,6 +270,7 @@ body.login-page, body.register-page {
     display: flex;
     align-items: flex-start;
     margin-bottom: 10px;
+    flex-wrap: nowrap; /* Add this line */
 }
 
 /* Username style */
@@ -260,7 +309,16 @@ body.login-page, body.register-page {
 /* Message bubble alignment */
 .message-right {
     background-color: #007bff;
+    color: white;
     border-radius: 15px 15px 0 15px;
+    align-self: flex-end;
+}
+
+.message-left {
+    background-color: white;
+    color: black;
+    border-radius: 15px 15px 15px 0;
+    align-self: flex-start;
 }
 
 /* Timestamp for each message */
@@ -354,12 +412,12 @@ body.login-page, body.register-page {
 }
 
 /* File download link */
-.file-download-link.no-underline {
+.file-download-link {
     text-decoration: none;
-    color: white;
+    color: black;
 }
 
-.file-download-link.no-underline:hover {
+.file-download-link:hover {
     text-decoration: underline;
 }
 
@@ -379,4 +437,236 @@ body.login-page, body.register-page {
     height: 16px;
     border-radius: 50%;
     border: none;
+}
+
+.members-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.8); /* Lighter font color */
+}
+
+/* File item styles */
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #40444b;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.remove-file {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Warning message styles */
+.warning-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #f44336;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.warning-message button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+.resend-file-button {
+    margin-left: 10px;
+    padding: 2px 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.resend-file-button:hover {
+    background-color: #45a049;
+}
+
+/* File download link */
+.message-right .file-download-link {
+    color: white;
+}
+
+.message-left .file-download-link {
+    color: black;
+}
+
+/* Message content */
+.message-content {
+    flex: 1; /* Add this line */
+    min-width: 0; /* Add this line */
+}
+
+/* File preview image */
+.file-preview-image {
+    max-width: 100%; /* Add this line */
+    height: auto; /* Add this line */
+    border-radius: 5px; /* Add this line, add rounded corners to image preview */
+}
+
+.message-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+}
+
+.notification-dot {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+
+/* Add back icon styles */
+.back-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #2f3136;
+}
+
+.message-bell-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.message-bell-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.private-message-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    max-height: 400px;
+    background-color: #36393f;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.private-message-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #2f3136;
+}
+
+.private-message-popup-header h3 {
+    margin: 0;
+}
+
+.close-popup-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.private-message-list {
+    padding: 10px;
+}
+
+.private-message-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.private-message-item .avatar {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.private-message-item .message-icon {
+    margin-left: auto;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.member-info .username {
+    margin-left: 5px;
+}
+
+.message-time {
+    text-align: center;
+    font-size: 12px;
+    color: #a0a0a0;
+    margin-bottom: 5px;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 10px 10px 10px 50px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.input-wrapper img.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+}
+
+.message-content-wrapper {
+    display: flex;
+    align-items: flex-start;
 }

@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat System</title>
-    <link rel="stylesheet" href="directMessage.css">
+    <title>Direct Message</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="chat-container">
-
-        <div class="chat-status-message">it's blank right now but fill it with some messages :]</div> <!-- Status message -->
-        <div class="chat-box"></div>
+        <div class="chat-header">
+            <img src="./images/back-icon.png" alt="Back" class="back-icon" id="back-button">
+            <h2 id="recipient-name"></h2>
         </div>
+        <div class="chat-box"></div>
         <div class="file-transfer-area" style="display: none;">
             <div class="file-preview"></div>
             <div class="file-progress"></div>
         </div>
         <div class="input-box">
-            <button class="clear-button">Clear</button>
             <input type="text" class="input-text" placeholder="Type a message...">
             <input type="file" id="file-input" style="display: none;">
             <button class="attach-file-button">📎</button>
             <button class="send-button">Send</button>
         </div>
+        <div id="typing-indicator" style="display: none;">User is typing...</div>
     </div>
-        <script src="directMessage.js"></script>
-    </body>
+    <script src="directMessage.js"></script>
+</body>
 </html>

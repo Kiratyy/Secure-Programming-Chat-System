@@ -34,5 +34,12 @@
         <p>Already have an account? <a href="landing.html">Log in</a></p>
     </div>
     <script src="app.js"></script>
+    <script>
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                register();
+            }
+        });
+    </script>
 </body>
 </html>
