@@ -10,26 +10,52 @@
     <div class="welcome-container">
         <h1>Welcome to The Chat</h1>
         
-        <div class="input-group">
-            <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
-            <input type="text" id="username" placeholder="Username" onkeypress="checkEnter(event)">
-        </div>
-        
-        <div class="input-group">
-            <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
-            <input type="password" id="password" placeholder="Password" onkeypress="checkEnter(event)">
-        </div>
-        
-        <button class="button-style" onclick="joinChat()">Login</button>
+        <form id="login-form">
+            <div class="input-group">
+                <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
+                <input type="text" name="username" id="username" placeholder="Username" required>
+            </div>
+            
+            <div class="input-group">
+                <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
+                <input type="password" name="password" id="password" placeholder="Password" required>
+            </div>
+            
+            <button type="submit" class="button-style">Login</button>
+        </form>
         
         <p>Don't have an account? <a href="register.html">Create account</a></p>
     </div>
-    <script src="app.js"></script>
     <script>
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                joinChat();
-            }
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/main';
+                } else {
+                    alert('Login failed: ' + data.error);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again. Details: ' + error.message);
+            });
         });
     </script>
 </body>
