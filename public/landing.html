@@ -10,15 +10,19 @@
     <div class="welcome-container">
         <h1>Welcome to The Chat</h1>
         
+        <div id="error-message" class="error-message" style="display: none;">
+            <span id="error-text"></span>
+        </div>
+        
         <form id="login-form">
             <div class="input-group">
                 <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
-                <input type="text" name="username" id="username" placeholder="Username" required>
+                <input type="text" name="username" id="username" placeholder="Username" required autocomplete="username">
             </div>
             
             <div class="input-group">
                 <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
-                <input type="password" name="password" id="password" placeholder="Password" required>
+                <input type="password" name="password" id="password" placeholder="Password" required autocomplete="current-password">
             </div>
             
             <button type="submit" class="button-style">Login</button>
@@ -27,10 +31,15 @@
         <p>Don't have an account? <a href="register.html">Create account</a></p>
     </div>
     <script>
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = usernameInput.value;
+            const password = passwordInput.value;
 
             fetch('/login', {
                 method: 'POST',
@@ -41,22 +50,39 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.json().then(data => {
+                        throw new Error(data.error);
+                    });
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.success) {
+                    localStorage.setItem('username', username);
                     window.location.href = '/main';
                 } else {
-                    alert('Login failed: ' + data.error);
+                    throw new Error(data.error);
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again. Details: ' + error.message);
+                if (error.message === 'Invalid credentials') {
+                    errorText.textContent = "Username or password incorrect, please try again";
+                } else if (error.message === 'User not found') {
+                    errorText.textContent = "User not found, please register first";
+                } else {
+                    errorText.textContent = "An error occurred. Please try again.";
+                }
+                errorMessage.style.display = 'block';
             });
         });
+
+        usernameInput.addEventListener('input', hideErrorMessage);
+        passwordInput.addEventListener('input', hideErrorMessage);
+
+        function hideErrorMessage() {
+            errorMessage.style.display = 'none';
+        }
     </script>
 </body>
 </html>

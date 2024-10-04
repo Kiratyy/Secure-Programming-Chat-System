@@ -1,10 +1,11 @@
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const path = require('path');
 const WebSocket = require('ws');
 const fs = require('fs');
+const { chatHistory } = require('./webSocket');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,51 +20,75 @@ app.use(express.static(publicPath));
 
 // MySQL Connection
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'secure_database'
 });
 
 connection.connect((err) => {
-    if (err) {
-      console.error('Error connecting to the database:', err);
-      console.log('Database connection details:', {
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        database: process.env.DB_NAME
-      });
-      return;
-    }
-    console.log('Connected to the MySQL server.');
-  });
+  if (err) {
+    console.error('Error connecting to the database:', err);
+    console.log('Database connection details:', {
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      database: process.env.DB_NAME
+    });
+    return;
+  }
+  console.log('Connected to the MySQL server.');
+});
 
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(publicPath, 'landing.html'));
 });
 
+// Register route
+app.post('/register', (req, res) => {
+  console.log('Received registration request:', req.body);
+  const { username, password } = req.body;
+  
+  const query = 'INSERT INTO userinputdata (username, password) VALUES (?, ?)';
+  connection.query(query, [username, password], (error, results) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      return res.status(500).json({ error: 'Server error', details: error.message });
+    }
+    
+    console.log('Registration successful for user:', username);
+    res.json({ success: true, message: 'Registration successful' });
+  });
+});
+
+// Login route
 app.post('/login', (req, res) => {
   console.log('Received login request:', req.body);
   const { username, password } = req.body;
   
-  const query = 'SELECT * FROM userinputdata WHERE username = ? AND password = ?';
-  connection.query(query, [username, password], (error, results) => {
+  const query = 'SELECT * FROM userinputdata WHERE username = ?';
+  console.log('Executing query:', query);
+  console.log('With parameters:', username);
+  
+  connection.query(query, [username], (error, results) => {
     if (error) {
-      console.error('Error executing query: ' + error.stack);
-      return res.status(500).json({ error: 'Server error' });
+      console.error('Error executing query:', error);
+      return res.status(500).json({ error: 'Server error', details: error.message });
     }
     
     console.log('Query results:', results);
     
     if (results.length > 0) {
-      // User authenticated successfully
-      console.log('Login successful for user:', username);
-      res.json({ success: true, message: 'Login successful' });
+      if (results[0].password === password) {
+        console.log('Login successful for user:', username);
+        res.json({ success: true, message: 'Login successful' });
+      } else {
+        console.log('Login failed for user:', username, '(incorrect password)');
+        res.status(401).json({ error: 'Invalid credentials' });
+      }
     } else {
-      // Authentication failed
-      console.log('Login failed for user:', username);
-      res.status(401).json({ error: 'Invalid credentials' });
+      console.log('Login failed for user:', username, '(user not found)');
+      res.status(404).json({ error: 'User not found' });
     }
   });
 });
@@ -73,140 +98,22 @@ app.get('/main', (req, res) => {
   res.sendFile(path.join(publicPath, 'main.html'));
 });
 
-// WebSocket server setup
-const wss = new WebSocket.Server({ port: process.env.WS_PORT || 8080 });
-
-// A map to store connected clients and their usernames along with their status
-const clients = new Map();
-
-// Store chat history
-let chatHistory = [];
-
-// Load chat history from file
-function loadChatHistory() {
-    const historyPath = path.join(__dirname, 'chatHistory.json');
-    if (fs.existsSync(historyPath)) {
-        const data = fs.readFileSync(historyPath, 'utf8');
-        chatHistory = JSON.parse(data);
-    }
-}
-
-// Save chat history to file
-function saveChatHistory() {
-    const historyPath = path.join(__dirname, 'chatHistory.json');
-    fs.writeFileSync(historyPath, JSON.stringify(chatHistory), 'utf8');
-}
-
-// Broadcast the list of online and offline members to all clients
-function broadcastMemberList() {
-    const memberList = Array.from(clients.entries()).map(([userId, clientData]) => ({
-        id: userId,
-        status: clientData.status,
-        isTyping: clientData.isTyping
-    }));
-
-    const message = JSON.stringify({
-        type: 'member-list',
-        data: memberList
-    });
-
-    clients.forEach(clientData => {
-        if (clientData.socket.readyState === WebSocket.OPEN) {
-            clientData.socket.send(message);
-        }
-    });
-}
-
-// Broadcast message to all clients
-function broadcastMessage(message) {
-    clients.forEach(clientData => {
-        if (clientData.socket.readyState === WebSocket.OPEN) {
-            clientData.socket.send(JSON.stringify(message));
-        }
-    });
-}
-
-// Handle WebSocket connection
-wss.on('connection', (ws) => {
-    console.log('New client connected');
-
-    ws.on('message', (data) => {
-        const message = JSON.parse(data);
-
-        if (message.type === 'register') {
-            const userId = message.userId;
-            clients.set(userId, { socket: ws, status: 'online', isTyping: false });
-            broadcastMemberList();
-            ws.send(JSON.stringify({ type: 'chat-history', data: chatHistory }));
-        }
-
-        if (message.type === 'status-update') {
-            const client = clients.get(message.userId);
-            if (client) {
-                client.status = message.status;
-                broadcastMemberList();
-            }
-        }
-
-        if (message.type === 'group-message') {
-            const groupMessage = {
-                type: 'group-message',
-                from: message.from,
-                content: message.content,
-                timestamp: new Date().toISOString()
-            };
-            chatHistory.push(groupMessage);
-            saveChatHistory();
-            broadcastMessage(groupMessage);
-        }
-
-        if (message.type === 'private-message') {
-            const targetClient = clients.get(message.to);
-            if (targetClient && targetClient.socket.readyState === WebSocket.OPEN) {
-                targetClient.socket.send(JSON.stringify({
-                    type: 'private-message',
-                    from: message.from,
-                    to: message.to,
-                    content: message.content,
-                    timestamp: new Date().toISOString()
-                }));
-            }
-        }
-
-        if (message.type === 'file-transfer') {
-            const targetClient = clients.get(message.to);
-            if (targetClient && targetClient.socket.readyState === WebSocket.OPEN) {
-                targetClient.socket.send(JSON.stringify({
-                    type: 'file-transfer',
-                    from: message.from,
-                    to: message.to,
-                    fileName: message.fileName,
-                    fileSize: message.fileSize,
-                    fileType: message.fileType,
-                    fileData: message.fileData
-                }));
-            }
-        }
-
-        if (message.type === 'typing-start' || message.type === 'typing-stop') {
-            const client = clients.get(message.userId);
-            if (client) {
-                client.isTyping = message.type === 'typing-start';
-                broadcastMemberList();
-            }
-        }
-    });
-
-    ws.on('close', () => {
-        for (let [userId, clientData] of clients) {
-            if (clientData.socket === ws) {
-                clients.delete(userId);
-                break;
-            }
-        }
-        broadcastMemberList();
-    });
+// Add API endpoint for chat history
+app.get('/api/chat-history', (req, res) => {
+    const { user1, user2 } = req.query;
+    console.log(`Fetching chat history for users: ${user1} and ${user2}`);
+    const userChatHistory = getChatHistory(user1, user2);
+    res.json(userChatHistory);
 });
+
+// 获取聊天历史的函数
+function getChatHistory(user1, user2) {
+    return chatHistory.filter(message => 
+        (message.type === 'private-message' && 
+        ((message.from === user1 && message.to === user2) || 
+        (message.from === user2 && message.to === user1)))
+    ).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+}
 
 // Start the server
 app.listen(port, () => {
@@ -214,6 +121,3 @@ app.listen(port, () => {
   console.log(`Serving static files from: ${publicPath}`);
   console.log(`WebSocket server is running on ws://localhost:${process.env.WS_PORT || 8080}`);
 });
-
-// Load chat history when the server starts
-loadChatHistory();

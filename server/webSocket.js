@@ -49,12 +49,30 @@ function broadcastMemberList() {
 
 // Broadcast message to all clients
 function broadcastMessage(message) {
+    console.log('Broadcasting message:', message.type);
     clients.forEach(clientData => {
         if (clientData.socket.readyState === WebSocket.OPEN) {
             clientData.socket.send(JSON.stringify(message));
         }
     });
 }
+
+// Add a throttling function
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+// Use throttling in broadcastMemberList
+const throttledBroadcastMemberList = throttle(broadcastMemberList, 1000);
 
 /**
  * Handle WebSocket connection event.
@@ -67,12 +85,13 @@ wss.on('connection', (ws) => {
      */
     ws.on('message', (data) => {
         const message = JSON.parse(data);  // Parse the incoming message
+        console.log('Received message:', message.type);
 
         // Register a user when they connect
         if (message.type === 'register') {
             const userId = message.userId;
             clients.set(userId, { socket: ws, status: 'online', isTyping: false });  // Add the client to the map with status 'online'
-            broadcastMemberList();  // Broadcast the updated member list
+            throttledBroadcastMemberList();  // Broadcast the updated member list
             // Send chat history to the newly connected client
             ws.send(JSON.stringify({ type: 'chat-history', data: chatHistory }));
         }
@@ -82,7 +101,7 @@ wss.on('connection', (ws) => {
             const client = clients.get(message.userId);
             if (client) {
                 client.status = message.status;  // Update the user's status
-                broadcastMemberList();  // Broadcast the updated member list
+                throttledBroadcastMemberList();  // Broadcast the updated member list
             }
         }
 
@@ -99,52 +118,38 @@ wss.on('connection', (ws) => {
             broadcastMessage(groupMessage);
         }
 
-        // Handle private messaging
-        if (message.type === 'private-message') {
-            const targetClient = clients.get(message.to);
-            if (targetClient && targetClient.socket.readyState === WebSocket.OPEN) {
-                targetClient.socket.send(JSON.stringify({
-                    type: 'private-message',
-                    from: message.from,
-                    to: message.to,
-                    content: message.content,
-                    timestamp: new Date().toISOString()
-                }));
-            }
-        }
-
         // Handle file transfer
         if (message.type === 'file-transfer') {
-            const targetClient = clients.get(message.to);
-            if (targetClient && targetClient.socket.readyState === WebSocket.OPEN) {
-                targetClient.socket.send(JSON.stringify({
-                    type: 'file-transfer',
-                    from: message.from,
-                    to: message.to,
-                    fileName: message.fileName,
-                    fileSize: message.fileSize,
-                    fileType: message.fileType,
-                    fileData: message.fileData
-                }));
-            }
+            console.log('Received file transfer request:', message.fileName);
+            const fileMessage = {
+                type: 'file-transfer',
+                from: message.from,
+                fileName: message.fileName,
+                fileSize: message.fileSize,
+                fileType: message.fileType,
+                fileData: message.fileData
+            };
+            broadcastMessage(fileMessage);
         }
 
         // Handle typing start
-        if (message.type === 'typing-start') {
+        if (message.type === 'typing-start' || message.type === 'typing-stop') {
             const client = clients.get(message.userId);
             if (client) {
-                client.isTyping = true;
-                broadcastMemberList();
+                client.isTyping = message.type === 'typing-start';
+                throttledBroadcastMemberList();
             }
         }
 
-        // Handle typing stop
-        if (message.type === 'typing-stop') {
-            const client = clients.get(message.userId);
-            if (client) {
-                client.isTyping = false;
-                broadcastMemberList();
+        // Handle private messages
+        if (message.type === 'private-message') {
+            const targetClient = clients.get(message.to);
+            if (targetClient && targetClient.socket.readyState === WebSocket.OPEN) {
+                targetClient.socket.send(JSON.stringify(message));
             }
+            // Save private messages to chat history
+            chatHistory.push(message);
+            saveChatHistory();
         }
     });
 
@@ -159,8 +164,12 @@ wss.on('connection', (ws) => {
                 break;
             }
         }
-        broadcastMemberList();  // Broadcast the updated member list
+        throttledBroadcastMemberList();  // Broadcast the updated member list
     });
 });
+
+module.exports = {
+    chatHistory,
+};
 
 console.log("WebSocket server is running on ws://localhost:8080");

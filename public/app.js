@@ -70,54 +70,40 @@ const loadChatHistory = () => {
     });
 };
 
+// Add an object to store unread private messages
+let unreadPrivateMessages = {};
+
 // Handle incoming WebSocket messages
 ws.onmessage = (event) => {
     const message = JSON.parse(event.data);
+    console.log('Received message:', message);
 
-    // Handle member list updates
-    if (message.type === 'member-list') {
-        updateMemberList(message.data);
-    }
-
-    // Handle group messages
-    if (message.type === 'group-message') {
-        saveMessage({
-            from: message.from,
-            content: message.content,
-            timestamp: message.timestamp
-        });
-        displayMessage(message.from, message.content, message.from === storedUsername, new Date(message.timestamp));
-    }
-
-    // Handle file transfers
-    if (message.type === 'file-transfer') {
-        receiveFile(message.from, message.fileName, message.fileSize, message.fileType, message.fileData);
-    }
-
-    // Handle typing start
-    if (message.type === 'typing-start' && message.userId !== storedUsername) {
-        typingUsers.add(message.userId);
-        updateTypingUsers();
-        updateMemberTypingStatus(message.userId, true);
-    }
-
-    // Handle typing stop
-    if (message.type === 'typing-stop' && message.userId !== storedUsername) {
-        typingUsers.delete(message.userId);
-        updateTypingUsers();
-        updateMemberTypingStatus(message.userId, false);
-    }
-
-    if (message.type === 'typing-start') {
-        updateMemberTypingStatus(message.userId, true);
-    }
-
-    if (message.type === 'typing-stop') {
-        updateMemberTypingStatus(message.userId, false);
-    }
-
-    if (message.type === 'private-message') {
-        handlePrivateMessage(message);
+    switch (message.type) {
+        case 'member-list':
+            if (Array.isArray(message.data)) {
+                updateMemberList(message.data);
+            } else {
+                console.error('Invalid member list data:', message.data);
+            }
+            break;
+        case 'group-message':
+            displayMessage(message.from, message.content, message.from === storedUsername, new Date(message.timestamp));
+            break;
+        case 'file-transfer':
+            console.log('Received file:', message.fileName);
+            receiveFile(message.from, message.fileName, message.fileSize, message.fileType, message.fileData);
+            break;
+        case 'private-message':
+            handlePrivateMessage(message);
+            break;
+        case 'typing-start':
+        case 'typing-stop':
+            if (message.userId !== storedUsername) {
+                updateMemberTypingStatus(message.userId, message.type === 'typing-start');
+            }
+            break;
+        default:
+            console.log('Unhandled message type:', message.type);
     }
 };
 
@@ -137,61 +123,61 @@ const updateMemberList = (data) => {
         return;
     }
 
-    members = data; // Update global members array
-    memberList.innerHTML = '';
+    // Only update DOM when the member list changes
+    if (JSON.stringify(members) !== JSON.stringify(data)) {
+        members = data;
+        memberList.innerHTML = '';
 
-    const membersHeader = document.createElement('div');
-    membersHeader.classList.add('members-header');
+        const membersHeader = document.createElement('div');
+        membersHeader.classList.add('members-header');
 
-    const membersTitle = document.createElement('div');
-    membersTitle.innerText = 'Members';
-    membersTitle.classList.add('members-title');
+        const membersTitle = document.createElement('div');
+        membersTitle.innerText = 'Members';
+        membersTitle.classList.add('members-title');
 
-    const messageBell = createMessageBell();
+        const messageBell = createMessageBell();
 
-    membersHeader.appendChild(membersTitle);
-    membersHeader.appendChild(messageBell);
+        membersHeader.appendChild(membersTitle);
+        membersHeader.appendChild(messageBell);
 
-    memberList.appendChild(membersHeader);
+        memberList.appendChild(membersHeader);
 
-    // Add divider
-    const membersDivider = document.createElement('div');
-    membersDivider.classList.add('members-divider');
-    memberList.appendChild(membersDivider);
+        // Add divider
+        const membersDivider = document.createElement('div');
+        membersDivider.classList.add('members-divider');
+        memberList.appendChild(membersDivider);
 
-    let onlineMembers = data.filter(member => member.status === 'online' || member.isTyping);
-    let offlineMembers = data.filter(member => member.status === 'offline' && !member.isTyping);
+        let onlineMembers = data.filter(member => member.status === 'online' || member.isTyping);
+        let offlineMembers = data.filter(member => member.status === 'offline' && !member.isTyping);
 
-    const onlineTitle = document.createElement('div');
-    onlineTitle.innerText = `Online - ${onlineMembers.length}`;
-    onlineTitle.classList.add('member-section-title');
-    memberList.appendChild(onlineTitle);
+        const onlineTitle = document.createElement('div');
+        onlineTitle.innerText = `Online - ${onlineMembers.length}`;
+        onlineTitle.classList.add('member-section-title');
+        memberList.appendChild(onlineTitle);
 
-    onlineMembers.forEach(member => {
-        const memberDiv = createMemberElement(member);
-        memberList.appendChild(memberDiv);
-    });
-
-    if (offlineMembers.length > 0) {
-        const offlineDivider = document.createElement('div');
-        offlineDivider.classList.add('members-divider');
-        memberList.appendChild(offlineDivider);
-
-        const offlineTitle = document.createElement('div');
-        offlineTitle.innerText = `Offline - ${offlineMembers.length}`;
-        offlineTitle.classList.add('member-section-title');
-        memberList.appendChild(offlineTitle);
-
-        offlineMembers.forEach(member => {
+        onlineMembers.forEach(member => {
             const memberDiv = createMemberElement(member);
             memberList.appendChild(memberDiv);
         });
+
+        if (offlineMembers.length > 0) {
+            const offlineDivider = document.createElement('div');
+            offlineDivider.classList.add('members-divider');
+            memberList.appendChild(offlineDivider);
+
+            const offlineTitle = document.createElement('div');
+            offlineTitle.innerText = `Offline - ${offlineMembers.length}`;
+            offlineTitle.classList.add('member-section-title');
+            memberList.appendChild(offlineTitle);
+
+            offlineMembers.forEach(member => {
+                const memberDiv = createMemberElement(member);
+                memberList.appendChild(memberDiv);
+            });
+        }
+
+        saveUserList(data);
     }
-
-    saveUserList(data);
-
-    const privateMessagePopup = createPrivateMessagePopup();
-    document.body.appendChild(privateMessagePopup);
 };
 
 // Create member elements with dropdown functionality
@@ -230,7 +216,6 @@ const createMemberElement = (member) => {
 
     memberDiv.appendChild(memberInfo);
 
-    // Only add message icon for other users
     if (member.id !== storedUsername) {
         const messageIcon = document.createElement('img');
         messageIcon.src = './images/message-icon.jpg';
@@ -239,7 +224,7 @@ const createMemberElement = (member) => {
             window.location.href = `directMessage.html?user=${encodeURIComponent(member.id)}`;
         });
 
-        if (member.hasNewMessage) {
+        if (unreadPrivateMessages[member.id] && unreadPrivateMessages[member.id].length > 0) {
             const notificationDot = document.createElement('div');
             notificationDot.classList.add('notification-dot');
             messageIcon.appendChild(notificationDot);
@@ -355,6 +340,7 @@ const sendMessage = (e) => {
 
 // Function to display file
 const displayFile = (from, file, isOwnFile) => {
+    console.log('Displaying file:', file.name);
     const messageContainer = document.createElement('div');
     messageContainer.classList.add('message-container');
 
@@ -378,7 +364,6 @@ const displayFile = (from, file, isOwnFile) => {
     fileElement.classList.add('file-attachment', isOwnFile ? 'message-right' : 'message-left');
     
     if (file.type.startsWith('image/')) {
-        // If it's an image, display a preview
         fileElement.innerHTML = `
             <img src="${file.url}" alt="${file.name}" class="file-preview-image">
             <a href="${file.url}" download="${file.name}" class="file-download-link">
@@ -386,7 +371,6 @@ const displayFile = (from, file, isOwnFile) => {
             </a>
         `;
     } else {
-        // For other file types, just show the link
         fileElement.innerHTML = `
             <a href="${file.url}" download="${file.name}" class="file-download-link">
                 📎 ${file.name} (${(file.size / 1024).toFixed(2)} KB)
@@ -401,6 +385,7 @@ const displayFile = (from, file, isOwnFile) => {
 
 // Function to receive file
 const receiveFile = (from, fileName, fileSize, fileType, fileData) => {
+    console.log('Processing received file:', fileName);
     const blob = new Blob([Uint8Array.from(atob(fileData), c => c.charCodeAt(0))], { type: fileType });
     const url = URL.createObjectURL(blob);
     displayFile(from, { name: fileName, size: fileSize, url: url, type: fileType }, from === storedUsername);
@@ -450,12 +435,33 @@ const updateFilePreview = () => {
     selectedFiles.forEach((file, index) => {
         const fileElement = document.createElement('div');
         fileElement.classList.add('file-item');
-        fileElement.innerHTML = `
-            <span>${file.name} (${(file.size / 1024).toFixed(2)} KB)</span>
-            <button class="remove-file" data-index="${index}">x</button>
-        `;
+        
+        if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.maxWidth = '100px';
+            img.style.maxHeight = '100px';
+            fileElement.appendChild(img);
+        }
+        
+        const fileInfo = document.createElement('span');
+        fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+        fileElement.appendChild(fileInfo);
+        
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'x';
+        removeButton.classList.add('remove-file');
+        removeButton.dataset.index = index;
+        fileElement.appendChild(removeButton);
+        
         filePreview.appendChild(fileElement);
     });
+
+    // Add file count info
+    const fileCountInfo = document.createElement('div');
+    fileCountInfo.textContent = `${selectedFiles.length}/5 files selected`;
+    fileCountInfo.classList.add('file-count-info');
+    filePreview.appendChild(fileCountInfo);
 };
 
 const removeFile = (index) => {
@@ -476,19 +482,23 @@ const sendFile = () => {
     selectedFiles.forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            const fileData = e.target.result.split(',')[1]; // Only send the base64 encoded data part
-            ws.send(JSON.stringify({
+            const fileData = e.target.result.split(',')[1];
+            const fileMessage = {
                 type: 'file-transfer',
                 from: storedUsername,
                 fileName: file.name,
                 fileSize: file.size,
                 fileType: file.type,
                 fileData: fileData
-            }));
+            };
+            console.log('Sending file:', fileMessage.fileName);
+            ws.send(JSON.stringify(fileMessage));
+            // Remove this line to avoid duplicating the file display
+            // displayFile(storedUsername, { name: file.name, size: file.size, url: URL.createObjectURL(file), type: file.type }, true);
         };
         reader.readAsDataURL(file);
     });
-    selectedFiles = []; // Clear the selected files list
+    selectedFiles = [];
     updateFilePreview();
     fileTransferArea.style.display = 'none';
 };
@@ -523,23 +533,38 @@ const simulateFileTransfer = (fileSize) => {
     }, fileSize / 50);
 };
 
-// Monitor user activity and manage the user's idle status
-const monitorActivity = () => {
+// Add debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Modify monitorActivity function
+const monitorActivity = debounce(() => {
     clearTimeout(activityTimeout);
     setUserStatus('online');
 
     activityTimeout = setTimeout(() => {
         setUserStatus('idle');
-    }, 10000); // Change to idle status after 10 seconds of inactivity
-};
+    }, 300000); // Change to 5 minutes after becoming idle
+}, 1000); // 1 second debounce time
 
-// Set user status
+// Modify setUserStatus function
 const setUserStatus = (status) => {
-    ws.send(JSON.stringify({
-        type: 'status-update',
-        userId: storedUsername,
-        status: status
-    }));
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+            type: 'status-update',
+            userId: storedUsername,
+            status: status
+        }));
+    }
 };
 
 // Event listener for sending a message
@@ -687,11 +712,11 @@ const formatMessageTime = (date) => {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === now.toDateString()) {
-        return `Today ${date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+        return `Today ${date.toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
     } else if (date.toDateString() === yesterday.toDateString()) {
-        return `Yesterday ${date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+        return `Yesterday ${date.toLocaleString('en-AU', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
     } else {
-        return date.toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+        return date.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
     }
 };
 
@@ -719,51 +744,123 @@ window.onload = () => {
     };
 };
 
-// Handle private messages
+// Modify handling private messages
 const handlePrivateMessage = (message) => {
     if (message.to === storedUsername) {
-        // Update sender's message icon
-        const senderElement = document.querySelector(`.member[data-user-id="${message.from}"]`);
-        if (senderElement) {
-            const messageIcon = senderElement.querySelector('.message-icon');
-            if (messageIcon && !messageIcon.querySelector('.notification-dot')) {
-                const notificationDot = document.createElement('div');
-                notificationDot.classList.add('notification-dot');
-                messageIcon.appendChild(notificationDot);
-            }
+        if (!unreadPrivateMessages[message.from]) {
+            unreadPrivateMessages[message.from] = [];
         }
-
-        // Update message bell icon
-        const bellIcon = document.querySelector('.message-bell-icon');
-        const bellNotificationDot = bellIcon.nextElementSibling;
-        bellNotificationDot.style.display = 'block';
-
-        // Update private message list
-        updatePrivateMessageList([message]); // This should be an array containing all unread private messages
+        unreadPrivateMessages[message.from].push(message);
+        updateMessageBellIcon();
+        updateMemberMessageIcon(message.from);
+        updatePrivateMessageList(); // Update private message preview in real-time
     }
 };
 
-// Modify create message bell button function
+// Modify updating message bell icon
+const updateMessageBellIcon = () => {
+    const bellIcon = document.querySelector('.message-bell-icon');
+    if (Object.keys(unreadPrivateMessages).length > 0) {
+        bellIcon.src = './images/notification-icon.webp';
+    } else {
+        bellIcon.src = './images/message-bell-icon.png';
+    }
+};
+
+// Modify updating private message list
+const updatePrivateMessageList = () => {
+    const messageList = document.querySelector('.private-message-list');
+    messageList.innerHTML = '';
+
+    Object.entries(unreadPrivateMessages).forEach(([userId, messages]) => {
+        const latestMessage = messages[messages.length - 1];
+        const messageItem = createMessageItem(userId, latestMessage);
+        messageList.appendChild(messageItem);
+    });
+
+    // If private message popup is open, update its content
+    const popup = document.querySelector('.private-message-popup');
+    if (popup.style.display === 'block') {
+        popup.querySelector('.private-message-list').innerHTML = messageList.innerHTML;
+    }
+};
+
+// Create message item
+const createMessageItem = (userId, message) => {
+    const messageItem = document.createElement('div');
+    messageItem.classList.add('private-message-item');
+
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar');
+    avatar.innerHTML = '🧑';
+
+    const messageContent = document.createElement('div');
+    messageContent.classList.add('message-content');
+
+    const username = document.createElement('span');
+    username.classList.add('username');
+    username.textContent = message.from;
+
+    const content = document.createElement('p');
+    content.textContent = message.content.length > 30 ? message.content.substring(0, 30) + '...' : message.content;
+
+    const time = document.createElement('span');
+    time.classList.add('time');
+    time.textContent = formatMessageTime(new Date(message.timestamp));
+
+    messageContent.appendChild(username);
+    messageContent.appendChild(content);
+    messageContent.appendChild(time);
+
+    messageItem.appendChild(avatar);
+    messageItem.appendChild(messageContent);
+
+    messageItem.addEventListener('click', () => {
+        window.location.href = `directMessage.html?user=${encodeURIComponent(userId)}`;
+    });
+
+    return messageItem;
+};
+
+// Add logout functionality
+const logoutButton = document.getElementById('logout-button');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        localStorage.removeItem('username');
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.close();
+        }
+        window.location.href = '/landing.html';
+    });
+}
+
+// Ensure WebSocket connection is initialized on page load
+window.addEventListener('load', () => {
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'register', userId: storedUsername }));
+    } else {
+        ws.addEventListener('open', () => {
+            ws.send(JSON.stringify({ type: 'register', userId: storedUsername }));
+        });
+    }
+});
+
+// Add createMessageBell function
 const createMessageBell = () => {
     const bellContainer = document.createElement('div');
     bellContainer.classList.add('message-bell-container');
 
     const bellIcon = document.createElement('img');
-    bellIcon.src = './images/message-bell-icon.png'; // Updated path
+    bellIcon.src = './images/message-bell-icon.png';
     bellIcon.classList.add('message-bell-icon');
     bellIcon.addEventListener('click', togglePrivateMessagePopup);
 
-    const notificationDot = document.createElement('div');
-    notificationDot.classList.add('notification-dot');
-    notificationDot.style.display = 'none';
-
     bellContainer.appendChild(bellIcon);
-    bellContainer.appendChild(notificationDot);
 
     return bellContainer;
 };
 
-// Modify create private message popup function
+// Add createPrivateMessagePopup function
 const createPrivateMessagePopup = () => {
     const popup = document.createElement('div');
     popup.classList.add('private-message-popup');
@@ -791,59 +888,24 @@ const createPrivateMessagePopup = () => {
     popup.appendChild(header);
     popup.appendChild(messageList);
 
+    document.body.appendChild(popup);
+
     return popup;
 };
 
-// Modify toggle private message popup display function
+// Modify togglePrivateMessagePopup function
 const togglePrivateMessagePopup = () => {
-    const popup = document.querySelector('.private-message-popup');
+    let popup = document.querySelector('.private-message-popup');
+    if (!popup) {
+        popup = createPrivateMessagePopup();
+    }
     popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
     if (popup.style.display === 'block') {
         updatePrivateMessageList();
     }
 };
 
-// Modify update private message list function
-const updatePrivateMessageList = () => {
-    const messageList = document.querySelector('.private-message-list');
-    messageList.innerHTML = '';
-
-    // This should get private messages from an array containing private messages
-    // Using a sample array for now
-    const privateMessages = [
-        { from: 'User1', content: 'Hello!', timestamp: new Date() },
-        { from: 'User2', content: 'How are you?', timestamp: new Date() },
-    ];
-
-    privateMessages.forEach(message => {
-        const messageItem = document.createElement('div');
-        messageItem.classList.add('private-message-item');
-
-        const avatar = document.createElement('div');
-        avatar.classList.add('avatar');
-        avatar.innerHTML = '🧑';
-
-        const messageContent = document.createElement('div');
-        messageContent.classList.add('message-content');
-
-        const username = document.createElement('span');
-        username.classList.add('username');
-        username.textContent = message.from;
-
-        const content = document.createElement('p');
-        content.textContent = message.content;
-
-        const time = document.createElement('span');
-        time.classList.add('time');
-        time.textContent = formatMessageTime(message.timestamp);
-
-        messageContent.appendChild(username);
-        messageContent.appendChild(content);
-        messageContent.appendChild(time);
-
-        messageItem.appendChild(avatar);
-        messageItem.appendChild(messageContent);
-
-        messageList.appendChild(messageItem);
-    });
-};
+// Ensure private message popup is created on page load
+window.addEventListener('load', () => {
+    createPrivateMessagePopup();
+});

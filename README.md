@@ -12,8 +12,6 @@ Our project team consists of the following members:
 
 ```bash
 node index.js
-
-node webSocket.js
 ```
 
 ## Database Setup
@@ -73,3 +71,14 @@ cd server
 node index.js
 
 ```
+
+## Notes
+
+Database configuration steps:
+
+    1.	Log in to MySQL using mysql -u root -p.
+    2.	Modify the authentication method for the user secure_user and set a password.
+    3.	Refresh the privileges.
+    4.	Grant the secure_user user SELECT, INSERT, UPDATE, and DELETE permissions on the secure_database database.
+    5.	Log in using secure_user and select the secure_database database.
+    6.	Create the table userinputdata and insert data.

@@ -30,29 +30,27 @@ ws.onerror = (error) => {
     console.error('WebSocket error:', error);
 };
 
+// Modify WebSocket message handling
 ws.onmessage = (event) => {
     const message = JSON.parse(event.data);
+    console.log('Received message:', message);
 
     if (message.type === 'private-message' && (message.from === recipient || message.to === recipient)) {
         displayMessage(message.from, message.content, message.from === storedUsername, new Date(message.timestamp));
     }
 
     if (message.type === 'file-transfer' && (message.from === recipient || message.to === recipient)) {
+        console.log('Received file in direct message:', message.fileName);
         receiveFile(message.from, message.fileName, message.fileSize, message.fileType, message.fileData);
     }
 
-    // ... 其他必要的消息处理 ...
+    // ... other message handling remains unchanged ...
 };
 
-// 添加显示消息的函数
+// Modify the function to display messages
 const displayMessage = (from, content, isOwnMessage, timestamp) => {
     const messageContainer = document.createElement('div');
     messageContainer.classList.add('message-container');
-
-    const timeDiv = document.createElement('div');
-    timeDiv.classList.add('message-time');
-    timeDiv.textContent = formatMessageTime(timestamp);
-    messageContainer.appendChild(timeDiv);
 
     const messageContentWrapper = document.createElement('div');
     messageContentWrapper.classList.add('message-content-wrapper');
@@ -86,14 +84,15 @@ const displayMessage = (from, content, isOwnMessage, timestamp) => {
     chatBox.scrollTop = chatBox.scrollHeight;
 };
 
-// 添加接收文件的函数
+// Add function to receive files
 const receiveFile = (from, fileName, fileSize, fileType, fileData) => {
+    console.log('Processing received file in direct message:', fileName);
     const blob = new Blob([Uint8Array.from(atob(fileData), c => c.charCodeAt(0))], { type: fileType });
     const url = URL.createObjectURL(blob);
     displayFile(from, { name: fileName, size: fileSize, url: url, type: fileType }, from === storedUsername);
 };
 
-// 添加显示文件的函数
+// Add function to display files
 const displayFile = (from, file, isOwnFile) => {
     const messageContainer = document.createElement('div');
     messageContainer.classList.add('message-container');
@@ -137,46 +136,148 @@ const displayFile = (from, file, isOwnFile) => {
     chatBox.scrollTop = chatBox.scrollHeight;
 };
 
-// 修改发送私信的函数
+// Modify the function to load chat history
+const loadChatHistory = () => {
+    console.log(`Loading chat history for users: ${storedUsername} and ${recipient}`);
+    fetch(`/api/chat-history?user1=${encodeURIComponent(storedUsername)}&user2=${encodeURIComponent(recipient)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(history => {
+            console.log('Received chat history:', history);
+            chatBox.innerHTML = ''; // Clear the chat box
+            if (history.length === 0) {
+                console.log('No chat history found');
+                const noHistoryMessage = document.createElement('div');
+                noHistoryMessage.textContent = 'No chat history found. Start a new conversation!';
+                noHistoryMessage.style.color = 'gray';
+                noHistoryMessage.style.textAlign = 'center';
+                chatBox.appendChild(noHistoryMessage);
+            } else {
+                // Add timestamp to the top of the chat box
+                const timeDiv = document.createElement('div');
+                timeDiv.classList.add('chat-timestamp');
+                timeDiv.textContent = formatMessageTime(new Date(history[0].timestamp));
+                chatBox.appendChild(timeDiv);
+
+                history.forEach(message => {
+                    displayMessage(message.from, message.content, message.from === storedUsername, new Date(message.timestamp));
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading chat history:', error);
+            const errorMessage = document.createElement('div');
+            errorMessage.textContent = `Failed to load chat history: ${error.message}. Please try refreshing the page.`;
+            errorMessage.style.color = 'red';
+            chatBox.appendChild(errorMessage);
+        });
+};
+
+// Call the function to load chat history when the page loads
+window.addEventListener('load', loadChatHistory);
+
+// Modify the function to send private messages
 const sendPrivateMessage = (content) => {
-    ws.send(JSON.stringify({
+    const message = {
         type: 'private-message',
         from: storedUsername,
         to: recipient,
-        content: content
-    }));
+        content: content,
+        timestamp: new Date().toISOString()
+    };
+    ws.send(JSON.stringify(message));
     displayMessage(storedUsername, content, true, new Date());
 };
 
-// 修改发送文件的函数
-const sendPrivateFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const fileData = e.target.result.split(',')[1];
-        ws.send(JSON.stringify({
-            type: 'file-transfer',
-            from: storedUsername,
-            to: recipient,
-            fileName: file.name,
-            fileSize: file.size,
-            fileType: file.type,
-            fileData: fileData
-        }));
-        displayFile(storedUsername, { name: file.name, size: file.size, url: URL.createObjectURL(file), type: file.type }, true);
-    };
-    reader.readAsDataURL(file);
+// Modify the function to send files
+const sendPrivateFile = () => {
+    selectedFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const fileData = e.target.result.split(',')[1];
+            const fileMessage = {
+                type: 'file-transfer',
+                from: storedUsername,
+                to: recipient,
+                fileName: file.name,
+                fileSize: file.size,
+                fileType: file.type,
+                fileData: fileData
+            };
+            console.log('Sending private file:', fileMessage.fileName);
+            ws.send(JSON.stringify(fileMessage));
+        };
+        reader.readAsDataURL(file);
+    });
+    selectedFiles = [];
+    updateFilePreview();
+    fileTransferArea.style.display = 'none';
 };
 
-// 添加处理文件选择的函数
+// Add function to handle file selection
 const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        sendPrivateFile(file);
+    const newFiles = Array.from(e.target.files);
+    if (selectedFiles.length + newFiles.length > 5) {
+        showWarning("You can only send up to 5 files at once.");
+        return;
     }
-    fileInput.value = ''; // 重置文件输入以允许选择相同的文件
+    selectedFiles = [...selectedFiles, ...newFiles];
+    updateFilePreview();
+    fileTransferArea.style.display = 'block';
+    
+    // Reset file input to allow selecting the same file again
+    fileInput.value = '';
 };
 
-// 添加事件监听器
+// Add function to update file preview
+const updateFilePreview = () => {
+    filePreview.innerHTML = '';
+    selectedFiles.forEach((file, index) => {
+        const fileElement = document.createElement('div');
+        fileElement.classList.add('file-item');
+        
+        if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.maxWidth = '100px';
+            img.style.maxHeight = '100px';
+            fileElement.appendChild(img);
+        }
+        
+        const fileInfo = document.createElement('span');
+        fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+        fileElement.appendChild(fileInfo);
+        
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'x';
+        removeButton.classList.add('remove-file');
+        removeButton.dataset.index = index;
+        fileElement.appendChild(removeButton);
+        
+        filePreview.appendChild(fileElement);
+    });
+
+    // Add file count info
+    const fileCountInfo = document.createElement('div');
+    fileCountInfo.textContent = `${selectedFiles.length}/5 files selected`;
+    fileCountInfo.classList.add('file-count-info');
+    filePreview.appendChild(fileCountInfo);
+};
+
+// Add function to remove files
+const removeFile = (index) => {
+    selectedFiles.splice(index, 1);
+    updateFilePreview();
+    if (selectedFiles.length === 0) {
+        fileTransferArea.style.display = 'none';
+    }
+};
+
+// Add event listeners
 sendButton.addEventListener('click', sendMessage);
 
 inputText.addEventListener('keypress', (e) => {
@@ -192,18 +293,41 @@ backButton.addEventListener('click', () => {
     window.location.href = 'main.html';
 });
 
-// 添加 sendMessage 函数
+// Add sendMessage function
 function sendMessage() {
     const content = inputText.value.trim();
     if (content) {
         sendPrivateMessage(content);
         inputText.value = '';
     }
+    if (selectedFiles.length > 0) {
+        sendPrivateFile();
+    }
 }
 
-// ... 其他必要的代码 ...
+// Add event listeners
+filePreview.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-file')) {
+        removeFile(parseInt(e.target.dataset.index));
+    }
+});
 
-// 修改 formatMessageTime 函数
+// Add showWarning function
+const showWarning = (message) => {
+    const warningElement = document.createElement('div');
+    warningElement.classList.add('warning-message');
+    warningElement.textContent = message;
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'x';
+    closeButton.onclick = () => warningElement.remove();
+    warningElement.appendChild(closeButton);
+    document.body.appendChild(warningElement);
+    setTimeout(() => {
+        warningElement.remove();
+    }, 10000);
+};
+
+// Modify formatMessageTime function
 const formatMessageTime = (date) => {
     const now = new Date();
     const yesterday = new Date(now);

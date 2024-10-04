@@ -9,36 +9,102 @@
 <body class="register-page">
     <div class="welcome-container">
         <h1>Create New Account</h1>
-
-        <!-- Username input with placeholder -->
-        <div class="input-group">
-            <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
-            <input type="text" id="new-username" placeholder="Username">
-        </div>
-
-        <!-- Password input with placeholder -->
-        <div class="input-group">
-            <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
-            <input type="password" id="new-password" placeholder="Password">
-        </div>
-
-        <!-- Confirm password input with placeholder -->
-        <div class="input-group">
-            <img src="./images/password-icon.jpg" class="input-icon" alt="Confirm Password Icon">
-            <input type="password" id="confirm-password" placeholder="Confirm password">
-        </div>
-
-        <!-- Create account button -->
-        <button class="button-style" onclick="register()">Create account</button>
-        
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        <form id="register-form">
+            <div class="input-group">
+                <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
+                <input type="text" id="new-username" placeholder="Username" required autocomplete="username">
+                <div class="error-text"></div>
+            </div>
+            <div class="input-group">
+                <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
+                <input type="password" id="new-password" placeholder="Password" required autocomplete="new-password">
+                <div class="error-text"></div>
+            </div>
+            <div class="input-group">
+                <img src="./images/password-icon.jpg" class="input-icon" alt="Confirm Password Icon">
+                <input type="password" id="confirm-password" placeholder="Confirm password" required autocomplete="new-password">
+                <div class="error-text"></div>
+            </div>
+            <button type="submit" class="button-style">Create account</button>
+        </form>
         <p>Already have an account? <a href="landing.html">Log in</a></p>
     </div>
-    <script src="app.js"></script>
     <script>
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                register();
+        const form = document.getElementById('register-form');
+        const username = document.getElementById('new-username');
+        const password = document.getElementById('new-password');
+        const confirmPassword = document.getElementById('confirm-password');
+        const errorMessage = document.getElementById('error-message');
+
+        function showError(input, message) {
+            const inputGroup = input.parentElement;
+            inputGroup.classList.add('error');
+            const errorText = inputGroup.querySelector('.error-text');
+            errorText.textContent = message;
+        }
+
+        function clearErrors() {
+            const inputGroups = document.querySelectorAll('.input-group');
+            inputGroups.forEach(group => {
+                group.classList.remove('error');
+                const errorText = group.querySelector('.error-text');
+                errorText.textContent = '';
+            });
+            errorMessage.style.display = 'none';
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            if (!username.value) {
+                showError(username, 'Please fill in this field');
+                return;
             }
+
+            if (!password.value) {
+                showError(password, 'Please fill in this field');
+                return;
+            }
+
+            if (!confirmPassword.value) {
+                showError(confirmPassword, 'Please fill in this field');
+                return;
+            }
+
+            if (password.value !== confirmPassword.value) {
+                showError(confirmPassword, 'Passwords do not match');
+                return;
+            }
+
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: username.value, password: password.value }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'landing.html';
+                } else {
+                    errorMessage.textContent = data.error || 'Registration failed. Please try again.';
+                    errorMessage.style.display = 'block';
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.style.display = 'block';
+            });
+        });
+
+        [username, password, confirmPassword].forEach(input => {
+            input.addEventListener('input', () => {
+                clearErrors();
+            });
         });
     </script>
 </body>
