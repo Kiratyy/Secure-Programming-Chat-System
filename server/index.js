@@ -106,7 +106,7 @@ app.get('/api/chat-history', (req, res) => {
     res.json(userChatHistory);
 });
 
-// 获取聊天历史的函数
+// Function to retrieve chat history
 function getChatHistory(user1, user2) {
     return chatHistory.filter(message => 
         (message.type === 'private-message' && 
