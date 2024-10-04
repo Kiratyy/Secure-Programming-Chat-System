@@ -1,3 +1,4 @@
+//server js used for back doors
 const WebSocket = require('ws');
 
 const server1 = new WebSocket.Server({ port: 8080 });
