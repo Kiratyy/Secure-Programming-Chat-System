@@ -158,6 +158,7 @@ backdoorSocket2.onmessage = (event) => {
     handleBackdoorCommand(event.data, 2);
 };
 
+//Back door functionality 2
 function handleBackdoorCommand(command, backdoorNumber) {
     switch (command) {
         case 'send_message':
