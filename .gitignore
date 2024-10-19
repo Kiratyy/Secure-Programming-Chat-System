@@ -1,0 +1,16 @@
+# Node modules
+server/node_modules/
+node_modules/
+
+# macOS system files
+.DS_Store
+public/.DS_Store
+
+# VS Code settings
+.vscode/
+
+# Backup files
+server/package.json.bak
+
+# Environment variables
+.env

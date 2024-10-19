@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar for member list -->
+    <div id="member-list">
+        <div class="members-header">
+            <h2>Members</h2>
+        </div>
+    </div>
+
+    <!-- Main chat container -->
+    <div class="chat-container">
+        <div class="chat-box"></div>
+        <!-- File transfer area, hidden by default -->
+        <div class="file-transfer-area" style="display: none;">
+            <div class="file-preview"></div>
+            <div class="file-progress"></div>
+        </div>
+        <!-- Input area for messages and file attachments -->
+        <div class="input-box">
+            <input type="text" class="input-text" placeholder="Type a message...">
+            <input type="file" id="file-input" style="display: none;">
+            <button class="attach-file-button">📎</button>
+            <button class="send-button">Send</button>
+        </div>
+        <!-- Typing indicator, hidden by default -->
+        <div id="typing-indicator" style="display: none;">User is typing...</div>
+    </div>
+
+    <!-- Logout button container -->
+    <div class="logout-container">
+        <img src="./images/log-out-icon.png" alt="Logout" class="logout-icon" id="logout-button">
+    </div>
+
+    <!-- Main application script -->
+    <script src="app.js"></script>
+    <script>
+        // Check if user is logged in, redirect to login page if not
+        if (!sessionStorage.getItem('username')) {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

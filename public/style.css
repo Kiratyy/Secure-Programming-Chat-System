@@ -1,0 +1,1212 @@
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    color: #333;
+}
+
+/* Styles specific to login and register pages */
+body.login-page, body.register-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Container for welcome text and input fields (login and register pages) */
+.login-page .welcome-container, .register-page .welcome-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 350px;
+    transition: all 0.3s ease;
+}
+
+.login-page .welcome-container:hover, .register-page .welcome-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Style for headers in the welcome container (login and register pages) */
+.login-page .welcome-container h1, .register-page .welcome-container h1 {
+    margin-bottom: 30px;
+    color: #4a4a4a;
+    font-size: 24px;
+}
+
+/* Input group for text fields with icons (login and register pages) */
+.login-page .input-group, .register-page .input-group {
+    position: relative;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.login-page .input-group.error input, .register-page .input-group.error input {
+    border: 2px solid #ff6b6b;
+}
+
+.login-page .input-group input, .register-page .input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: none;
+    border-radius: 50px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.login-page .input-group input:focus, .register-page .input-group input:focus {
+    outline: none;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+/* Icon inside input field (login and register pages) */
+.login-page .input-group img.input-icon, .register-page .input-group img.input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.login-page .input-group input:focus + img.input-icon, 
+.register-page .input-group input:focus + img.input-icon {
+    opacity: 1;
+}
+
+/* Error messages (login and register pages) */
+.login-page .error-text, .register-page .error-text {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.login-page .error-message, .register-page .error-message {
+    color: #ff6b6b;
+    background-color: #ffe5e5;
+    border: 1px solid #ff6b6b;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+}
+
+/* Button styling (login and register pages) */
+.login-page .welcome-container button, .register-page .welcome-container button {
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-page .welcome-container button:hover, .register-page .welcome-container button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.login-page .welcome-container button:active, .register-page .welcome-container button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Text and links in the welcome container (login and register pages) */
+.login-page .welcome-container p, .register-page .welcome-container p {
+    font-size: 12px;
+    color: #666;
+    margin-top: 20px;
+}
+
+.login-page .welcome-container a, .register-page .welcome-container a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login-page .welcome-container a:hover, .register-page .welcome-container a:hover {
+    color: #764ba2;
+}
+
+/* Password strength indicator (register page) */
+.register-page .password-strength {
+    margin-top: 10px;
+    font-size: 12px;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.register-page .strength-bar {
+    height: 4px;
+    margin-top: 5px;
+    transition: width 0.3s, background-color 0.3s;
+    border-radius: 2px;
+}
+
+.register-page #strength-text {
+    font-weight: bold;
+}
+
+/* Validation messages (register page) */
+.register-page #username-validation, .register-page #password-validation {
+    text-align: left;
+    font-size: 12px;
+    margin-top: 5px;
+    padding-left: 10px;
+}
+
+/* Responsive design for login and register pages */
+@media (max-width: 480px) {
+    .login-page .welcome-container, .register-page .welcome-container {
+        padding: 30px;
+        max-width: 90%;
+    }
+
+    .login-page .welcome-container h1, .register-page .welcome-container h1 {
+        font-size: 22px;
+    }
+
+    .login-page .input-group input, .register-page .input-group input {
+        font-size: 14px;
+    }
+
+    .login-page .welcome-container button, .register-page .welcome-container button {
+        font-size: 14px;
+    }
+}
+
+/* 保留原有的 main.html 和 directMessage.html 样式 */
+/* 这里应该包含原有的样式，确保不影响这些页面的布局和功能 */
+/* 例如： */
+
+.chat-container {
+    /* 保留原有的聊天容器样式 */
+}
+
+.message-container {
+    /* 保留原有的消息容器样式 */
+}
+
+/* 其他原有的样式... */
+
+/* main.html 和 directMessage.html 的原始样式 */
+/* Sidebar styles */
+#member-list {
+    width: 250px;
+    background-color: #23272A;
+    color: white;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    padding: 20px 10px 10px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.members-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    padding-bottom: 0;
+    padding-top: 2px;
+}
+
+.members-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0;
+    margin-top: 2px;
+}
+
+.members-divider {
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 0 2px 0;
+}
+
+.message-bell-container {
+    position: absolute;
+    top: 55px;
+    right: 10px;
+}
+
+.message-bell-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.member {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #36393f;
+    justify-content: space-between;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background-color: #7289da;
+    position: relative;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #36393f;
+}
+
+.online { background-color: #43b581; }
+.idle { background-color: #faa61a; }
+.offline { background-color: #747f8d; }
+.typing-status {
+    background-image: url('./images/typing.gif');
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+}
+
+.message-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.message-icon.unread {
+    filter: drop-shadow(0 0 5px red);
+}
+
+/* Chat container styles */
+.chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    background-color: #36393f;
+    overflow: hidden;
+}
+
+.chat-box {
+    padding: 20px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    background-color: #2f3136;
+    flex-grow: 1;
+}
+
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.username {
+    font-weight: bold;
+    color: #7289da;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 15px 15px 15px 0;
+    background-color: #007bff;
+    color: white;
+    position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 70%;
+}
+
+.message-right {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.message-left {
+    background-color: #f0f0f0;
+    color: #333;
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+.time {
+    font-size: 10px;
+    color: #a0a0a0;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+.input-box {
+    display: flex;
+    padding: 10px;
+    background-color: #2f3136;
+    height: 60px;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+    background-color: #40444b;
+    color: white;
+}
+
+.input-box button {
+    padding: 10px 20px;
+    background-color: #7289da;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+#typing-indicator {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 5px;
+    text-align: left;
+    padding-left: 15px;
+}
+
+.file-transfer-area {
+    padding: 10px;
+    background-color: #2f3136;
+    margin-bottom: 10px;
+}
+
+.file-preview {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.file-preview img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.file-progress {
+    height: 5px;
+    background-color: #007bff;
+    width: 0;
+    transition: width 0.3s;
+}
+
+.attach-file-button {
+    background-color: #4caf50;
+    margin-right: 5px;
+}
+
+.file-download-link {
+    text-decoration: none;
+    color: white;
+}
+
+.date-divider {
+    text-align: center;
+    font-size: 14px;
+    color: #bbb;
+    margin: 15px 0;
+}
+
+.typing-status {
+    background-image: url('./images/typing.gif');
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #40444b;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.remove-file {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.warning-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #f44336;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.warning-message button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+.resend-file-button {
+    margin-left: 10px;
+    padding: 2px 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.resend-file-button:hover {
+    background-color: #45a049;
+}
+
+.message-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-preview-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.message-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+}
+
+.notification-dot {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+
+.back-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #2f3136;
+}
+
+.private-message-popup {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    width: 300px;
+    max-height: 400px;
+    background-color: #36393f;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.private-message-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #2f3136;
+}
+
+.private-message-popup-header h3 {
+    margin: 0;
+    color: #ffffff;
+}
+
+.close-popup-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.private-message-list {
+    padding: 10px;
+}
+
+.private-message-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    border-bottom: 1px solid #2f3136;
+    cursor: pointer;
+}
+
+.private-message-item:hover {
+    background-color: #32353b;
+}
+
+.private-message-item .avatar {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.private-message-item .message-content {
+    flex: 1;
+}
+
+.private-message-item .username {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.private-message-item p {
+    margin: 5px 0;
+    color: #dcddde;
+}
+
+.private-message-item .time {
+    font-size: 12px;
+    color: #72767d;
+}
+
+.logout-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+
+.logout-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.message-timestamp {
+    text-align: center;
+    font-size: 12px;
+    color: #a0a0a0;
+    margin: 10px 0;
+}
+
+.file-count-info {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    text-align: right;
+}
+
+/* 添加响应式设计 */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    #member-list {
+        width: 100%;
+        height: auto;
+        max-height: 30vh;
+        display: none; /* 隐藏用户状态栏 */
+    }
+
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+    }
+}
+
+/* 主聊天页面样式 */
+body:not(.login-page):not(.register-page) {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    background-color: #36393f;
+    color: #dcddde;
+}
+
+#member-list {
+    width: 250px;
+    background-color: #2f3136;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #36393f;
+}
+
+.chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.input-box {
+    display: flex;
+    padding: 20px;
+    background-color: #40444b;
+}
+
+.input-box input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #40444b;
+    color: #dcddde;
+}
+
+.input-box button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #7289da;
+    color: white;
+    cursor: pointer;
+}
+
+.member {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #36393f;
+    border-radius: 5px;
+}
+
+.message-container {
+    margin-bottom: 15px;
+}
+
+.message {
+    background-color: #40444b;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 70%;
+}
+
+.message-right {
+    margin-left: auto;
+    background-color: #7289da;
+}
+
+.members-header, .members-divider {
+    margin-bottom: 15px;
+}
+
+.members-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.online { background-color: #43b581; }
+.offline { background-color: #747f8d; }
+
+.message-bell-container {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.message-bell-icon {
+    cursor: pointer;
+}
+
+.logout-container {
+    margin-top: 20px;
+}
+
+.logout-icon {
+    cursor: pointer;
+}
+
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-content {
+    flex: 1;
+}
+
+.username {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.message-left {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.message-right {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-start;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #36393f;
+}
+
+.online { background-color: #43b581; }
+.idle { background-color: #faa61a; }
+.offline { background-color: #747f8d; }
+.typing-status {
+    background-image: url('./images/typing.gif');
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+}
+
+#typing-indicator {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.user-section {
+    margin-bottom: 20px;
+}
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    background-color: #36393f;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #36393f;
+}
+
+.status-dot.online {
+    background-color: #43b581;
+}
+
+.status-dot.idle {
+    background-color: #faa61a;
+}
+
+.status-dot.offline {
+    background-color: #747f8d;
+}
+
+.status-dot.typing {
+    background-image: url('images/typing.gif');
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+}
+
+.user-name {
+    font-size: 14px;
+}
+
+#typing-indicator {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    text-align: left;
+    padding-left: 10px;
+}
+
+/* 修复聊天用户头像 */
+.message-container .avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    overflow: hidden;
+}
+
+/* 确保用户状态栏不会消失 */
+#member-list {
+    width: 250px;
+    min-width: 250px;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #2f3136;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    #member-list {
+        width: 100%;
+        height: auto;
+        max-height: 30vh;
+        display: none; /* 隐藏用户状态栏 */
+    }
+
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+    }
+}
+
+/* Members 大标题样式 */
+.members-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #ffffff;
+    border-bottom: 1px solid #40444b;
+    padding-bottom: 10px;
+}
+
+/* 在线和离线用户列表样式 */
+.user-section {
+    margin-bottom: 20px;
+}
+
+.user-section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #8e9297;
+}
+
+/* 调整用户项目样式 */
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.user-item:hover {
+    background-color: #36393f;
+}
+
+/* 调整头像容器样式 */
+.avatar-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+/* 调整状态点样式 */
+.status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #2f3136;
+}
+
+/* 用户名样式 */
+.user-name {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.welcome-message {
+    text-align: center;
+    color: #7289da;
+    font-style: italic;
+    margin: 10px 0;
+}
+
+.message-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.message-bell-icon.notification {
+    filter: drop-shadow(0 0 5px red);
+}
+
+.private-message-popup {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.private-message-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.close-popup-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.private-message-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.private-message-item:hover {
+    background-color: #f0f0f0;
+}
+
+.file-attachment.message-right {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.file-attachment.message-left {
+    background-color: #f0f0f0;
+    color: #333;
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: none;
+    border-radius: 50px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.input-group img.input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.input-group.error {
+    margin-bottom: 35px; /* 增加底部边距，为错误消息留出空间 */
+}
+
+.error-text {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #ff6b6b;
+    font-size: 12px;
+}
+
+.password-strength {
+    margin-top: 5px;
+    font-size: 12px;
+    text-align: left;
+    padding-left: 15px;
+}
+
+#username-validation, #password-validation {
+    text-align: left;
+    font-size: 12px;
+    margin-top: 5px;
+    padding-left: 15px;
+}
+
+.strength-bar {
+    height: 4px;
+    margin-top: 5px;
+    transition: width 0.3s, background-color 0.3s;
+    border-radius: 2px;
+}
+
+#strength-text {
+    font-weight: bold;
+}

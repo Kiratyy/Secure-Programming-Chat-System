@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to The Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+    <div class="welcome-container">
+        <h1>Welcome to The Chat</h1>
+        
+        <div id="error-message" class="error-message" style="display: none;">
+            <span id="error-text"></span>
+        </div>
+        
+        <form id="login-form">
+            <div class="input-group">
+                <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
+                <input type="text" name="username" id="username" placeholder="Username" required autocomplete="username">
+            </div>
+            
+            <div class="input-group">
+                <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
+                <input type="password" name="password" id="password" placeholder="Password" required autocomplete="current-password">
+            </div>
+            
+            <button type="submit" class="button-style">Login</button>
+        </form>
+        
+        <p>Don't have an account? <a href="register.html">Create account</a></p>
+    </div>
+    <script>
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;")
+                 .replace(/`/g, "&#96;");
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = escapeHtml(document.getElementById('username').value);
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.success) {
+                        sessionStorage.setItem('username', username);
+                        window.location.href = '/main';
+                    } else {
+                        throw new Error(data.error || 'Login failed');
+                    }
+                } else {
+                    throw new Error(data.error || 'Server error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('error-message').textContent = escapeHtml(error.message);
+                document.getElementById('error-message').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

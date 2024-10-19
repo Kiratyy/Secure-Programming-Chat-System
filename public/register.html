@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="register-page">
+    <div class="welcome-container">
+        <h1>Create New Account</h1>
+        <!-- Error message container, hidden by default -->
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        <form id="register-form">
+            <!-- Username input field -->
+            <div class="input-group">
+                <img src="./images/username-icon.png" class="input-icon" alt="Username Icon">
+                <input type="text" id="new-username" placeholder="Username" required autocomplete="username" maxlength="10">
+                <div class="error-text"></div>
+                <div id="username-validation"></div>
+            </div>
+            <!-- Password input field -->
+            <div class="input-group">
+                <img src="./images/password-icon.jpg" class="input-icon" alt="Password Icon">
+                <input type="password" id="new-password" placeholder="Password" required autocomplete="new-password" maxlength="20">
+                <div class="error-text"></div>
+                <div id="password-validation"></div>
+                <!-- Password strength indicator -->
+                <div class="password-strength">
+                    <div>Strength: <span id="strength-text"></span></div>
+                    <div class="strength-bar" id="strength-bar"></div>
+                </div>
+            </div>
+            <!-- Confirm password input field -->
+            <div class="input-group">
+                <img src="./images/password-icon.jpg" class="input-icon" alt="Confirm Password Icon">
+                <input type="password" id="confirm-password" placeholder="Confirm password" required autocomplete="new-password">
+                <div class="error-text"></div>
+            </div>
+            <!-- Submit button -->
+            <button type="submit" class="button-style">Create account</button>
+        </form>
+        <!-- Link to login page -->
+        <p>Already have an account? <a href="landing.html">Log in</a></p>
+    </div>
+    <script>
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;")
+                 .replace(/`/g, "&#96;");
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('register-form');
+            const username = document.getElementById('new-username');
+            const password = document.getElementById('new-password');
+            const confirmPassword = document.getElementById('confirm-password');
+            const errorMessage = document.getElementById('error-message');
+            const usernameValidation = document.getElementById('username-validation');
+            const passwordValidation = document.getElementById('password-validation');
+            const strengthText = document.getElementById('strength-text');
+            const strengthBar = document.getElementById('strength-bar');
+
+            // Function to display error messages
+            function showError(input, message) {
+                const inputGroup = input.parentElement;
+                inputGroup.classList.add('error');
+                const errorText = inputGroup.querySelector('.error-text');
+                errorText.textContent = message;
+            }
+
+            // Function to clear all error messages
+            function clearErrors() {
+                const inputGroups = document.querySelectorAll('.input-group');
+                inputGroups.forEach(group => {
+                    group.classList.remove('error');
+                    const errorText = group.querySelector('.error-text');
+                    errorText.textContent = '';
+                });
+                errorMessage.style.display = 'none';
+            }
+
+            // Function to validate username
+            function validateUsername() {
+                const value = username.value;
+                let isValid = true;
+                usernameValidation.innerHTML = '';
+
+                if (value.length > 10) {
+                    username.value = value.slice(0, 10);
+                }
+
+                if (/[^a-zA-Z0-9]/.test(value)) {
+                    usernameValidation.innerHTML += '❌ No special characters allowed<br>';
+                    isValid = false;
+                } else {
+                    usernameValidation.innerHTML += '✅ No special characters<br>';
+                }
+
+                return isValid;
+            }
+
+            // Function to validate password and update strength indicator
+            function validatePassword() {
+                const value = password.value;
+                let strength = 0;
+                passwordValidation.innerHTML = '';
+
+                if (value.length >= 6) {
+                    passwordValidation.innerHTML += '✅ At least 6 characters<br>';
+                    strength++;
+                } else {
+                    passwordValidation.innerHTML += '❌ At least 6 characters<br>';
+                }
+
+                if (/[A-Z]/.test(value)) {
+                    passwordValidation.innerHTML += '✅ Contains uppercase<br>';
+                    strength++;
+                } else {
+                    passwordValidation.innerHTML += '❌ Contains uppercase<br>';
+                }
+
+                if (/[a-z]/.test(value)) {
+                    passwordValidation.innerHTML += '✅ Contains lowercase<br>';
+                    strength++;
+                } else {
+                    passwordValidation.innerHTML += '❌ Contains lowercase<br>';
+                }
+
+                if (/[0-9]/.test(value)) {
+                    passwordValidation.innerHTML += '✅ Contains number<br>';
+                    strength++;
+                } else {
+                    passwordValidation.innerHTML += '❌ Contains number<br>';
+                }
+
+                // Update strength indicator
+                if (strength <= 2) {
+                    strengthText.textContent = 'Weak';
+                    strengthBar.style.width = '33%';
+                    strengthBar.style.backgroundColor = 'red';
+                } else if (strength === 3) {
+                    strengthText.textContent = 'Medium';
+                    strengthBar.style.width = '66%';
+                    strengthBar.style.backgroundColor = 'yellow';
+                } else {
+                    strengthText.textContent = 'Strong';
+                    strengthBar.style.width = '100%';
+                    strengthBar.style.backgroundColor = 'green';
+                }
+
+                return strength === 4;
+            }
+
+            // Add event listeners for real-time validation
+            username.addEventListener('input', validateUsername);
+            password.addEventListener('input', validatePassword);
+
+            // Form submission handler
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                clearErrors();
+
+                if (!validateUsername()) {
+                    showError(username, 'Invalid username');
+                    return;
+                }
+
+                if (!validatePassword()) {
+                    showError(password, 'Password does not meet requirements');
+                    return;
+                }
+
+                if (password.value !== confirmPassword.value) {
+                    showError(confirmPassword, 'Passwords do not match');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username: escapeHtml(username.value), password: password.value }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.location.href = 'landing.html';
+                    } else {
+                        throw new Error(data.error || 'Registration failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    errorMessage.textContent = escapeHtml(error.message);
+                    errorMessage.style.display = 'block';
+                }
+            });
+
+            // Clear errors on input
+            [username, password, confirmPassword].forEach(input => {
+                input.addEventListener('input', () => {
+                    clearErrors();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
